@@ -75,7 +75,7 @@ const Predict = () => {
                         >
                             <option value="">Choose a student...</option>
                             {students.map(s => (
-                                <option key={s._id} value={s._id}>{s.name} ({s.email})</option>
+                                <option key={s._id} value={s._id}>{s.name} ({s.registerNo})</option>
                             ))}
                         </select>
                     </div>
@@ -115,7 +115,7 @@ const Predict = () => {
                         </div>
                         <div style={{ flex: 1 }}>
                             <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>{result.name}</h2>
-                            <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{result.email}</p>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{result.registerNo}</p>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                                 <span style={{ fontSize: '1rem', fontWeight: '500' }}>Analysis Result:</span>

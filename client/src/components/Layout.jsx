@@ -6,7 +6,8 @@ import {
     UserPlus,
     LogOut,
     User,
-    GraduationCap
+    GraduationCap,
+    BrainCircuit
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -59,6 +60,10 @@ const Layout = ({ children }) => {
                             <NavLink to="/student-details" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                                 <GraduationCap size={20} />
                                 <span>Student Details</span>
+                            </NavLink>
+                            <NavLink to="/predict" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <BrainCircuit size={20} />
+                                <span>Prediction</span>
                             </NavLink>
                         </>
                     )}

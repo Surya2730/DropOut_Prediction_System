@@ -155,12 +155,7 @@ const AddStudent = () => {
             } else {
                 await axios.post('http://localhost:5000/api/students', studentData);
                 setMessage('Student Record Saved Successfully!');
-            }
-            setType('success');
 
-            if (isEditMode) {
-                setTimeout(() => navigate('/student-details'), 2000);
-            } else {
                 // Reset form
                 setFormData({
                     name: '', email: '', registerNo: '', department: '', attendance: '',
@@ -176,10 +171,22 @@ const AddStudent = () => {
                     internshipStatus: false, isPaidInternship: false, stipendAmount: '',
                     stressLevel: '1', depressionSigns: false
                 });
+
+                // Scroll to top
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             }
+            setType('success');
+
+            // Clear message after 3 seconds
+            setTimeout(() => {
+                setMessage('');
+                if (isEditMode) navigate('/student-details');
+            }, 3000);
+
         } catch (err) {
             setMessage(err.response?.data?.message || 'Error processing student record');
             setType('error');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     };
 

@@ -64,7 +64,7 @@ const Home = () => {
         <div className="animate-fade">
             <div style={{ marginBottom: '32px' }}>
                 <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
-                    {isFaculty ? 'Institutional Analytics' : 'Student Progress'}
+                    {isFaculty ? 'Student Dropout Prediction Analytics' : 'Student Progress'}
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
                     {isFaculty
@@ -76,12 +76,12 @@ const Home = () => {
             <div className="stats-grid" style={{ marginBottom: '32px' }}>
                 <div className="card glass stat-card">
                     <Users size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Total Database</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Total Students</p>
                     <p className="stat-value">{students.length}</p>
                 </div>
                 <div className="card glass stat-card">
                     <AlertTriangle size={24} color="#f87171" style={{ marginBottom: '12px' }} />
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Critical Risk</p>
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Critical Risk Students</p>
                     <p className="stat-value" style={{ color: '#f87171' }}>{highRiskCount}</p>
                 </div>
                 <div className="card glass stat-card">

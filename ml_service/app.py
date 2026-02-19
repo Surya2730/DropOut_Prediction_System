@@ -1,84 +1,61 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-import random
+import joblib
+import numpy as np
 
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
 
-# Mock Prediction API
-@app.route('/predict', methods=['POST'])
+# Load trained model
+model = joblib.load("robust_dropout_model.pkl")
+
+@app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
-    print(f"Received data for prediction: {data}")
-    
-    # 1. Academic Details
-    attendance = data.get('attendance', 100)
-    backlogs = data.get('backlogs', 0)
-    cgpa = data.get('cgpa', 8.0)
-    is_above_average = data.get('isAboveAverage', False)
-    
-    # New Multi-Semester Academic Check
-    sems = [
-        data.get('sem1Marks', 0), data.get('sem2Marks', 0), data.get('sem3Marks', 0),
-        data.get('sem4Marks', 0), data.get('sem5Marks', 0), data.get('sem6', 0),
-        data.get('sem7', 0), data.get('sem8', 0)
-    ]
-    
-    risk_score = 0
-    
-    # Academic Trend Analysis
-    low_sem_count = sum(1 for s in sems if 0 < s < 50)
-    if low_sem_count >= 3: risk_score += 20  # Chronic low performance
-    
-    # 2. Socio-Economic/Engagement
-    annual_income = data.get('annualIncome', 500000)
-    academic_participation = data.get('academicParticipation', True)
-    
-    # 3. Technical/Technical Skills
-    special_lab = data.get('specialLabParticipation', False)
-    
-    # 4. Placement/Internship
-    placement_training = data.get('placementTraining', False)
-    internship_status = data.get('internshipStatus', False)
-    
-    # 5. Mental Health
-    stress_level = data.get('stressLevel', 1)
-    depression_signs = data.get('depressionSigns', False)
-    
-    # Primary Risk Factors
-    if attendance < 75: risk_score += 30
-    if backlogs > 2: risk_score += 25
-    if stress_level >= 4: risk_score += 15
-    if depression_signs: risk_score += 20
-    if annual_income < 200000: risk_score += 10
-    
-    # Negative Performance
-    if not is_above_average and cgpa < 6.0: risk_score += 15
-    if low_sem_count > 0: risk_score += (low_sem_count * 5)
-    
-    # Lack of Engagement
-    if not academic_participation: risk_score += 10
-    if not special_lab: risk_score += 5
-    
-    # Mitigation (Protective) Factors
-    if placement_training: risk_score -= 10
-    if internship_status: risk_score -= 15
-    
-    # Ensure score doesn't go below 0
-    risk_score = max(0, risk_score)
-    
-    # Threshold for High Risk
-    risk = 1 if risk_score >= 50 else 0
-        
+
+    # Ensure all data values are converted to float or int for processing
+    try:
+        features = np.array([[
+            float(data.get("semesters_completed", 0)),
+            float(data.get("sem1_marks", 0)),
+            float(data.get("sem2_marks", 0)),
+            float(data.get("sem3_marks", 0)),
+            float(data.get("sem4_marks", 0)),
+            float(data.get("sem5_marks", 0)),
+            float(data.get("sem6_marks", 0)),
+            float(data.get("sem7_marks", 0)),
+            float(data.get("sem8_marks", 0)),
+            float(data.get("cgpa", 0)),
+            float(data.get("above_average_student", 0)),
+            float(data.get("attendance", 0)),
+            float(data.get("backlogs", 0)),
+            float(data.get("family_income", 0)),
+            float(data.get("pwd", 0)),
+            float(data.get("participates_academics", 0)),
+            float(data.get("sports_person", 0)),
+            float(data.get("college_team", 0)),
+            float(data.get("extracurricular_talent", 0)),
+            float(data.get("special_lab_participation", 0)),
+            float(data.get("event_participation", 0)),
+            float(data.get("event_winner", 0)),
+            float(data.get("placement_training_attended", 0)),
+            float(data.get("placement_training_attendance", 0)),
+            float(data.get("placement_interest", 1)),
+            float(data.get("internship_attended", 0)),
+            float(data.get("internship_type", 0)),
+            float(data.get("internship_stipend_amount", 0)),
+            float(data.get("stress_level", 1)),
+            float(data.get("depression_flag", 0))
+        ]])
+    except Exception as e:
+        return jsonify({"error": f"Invalid data format: {str(e)}"}), 400
+
+    prediction = model.predict(features)[0]
+
     return jsonify({
-        'dropout_risk': risk, 
-        'risk_score': risk_score,
-        'criteria': {
-            'risk_factors': ['Academic Performance', 'Financial Status', 'Mental Health', 'Engagement'],
-            'mitigation_factors': ['Technical Participation', 'Placement Training', 'Internships']
-        }
+        "dropout_risk": int(prediction),
+        "message": "High Risk" if prediction == 1 else "Low Risk"
     })
 
-if __name__ == '__main__':
-    print("Mock ML Service running on port 5001")
-    app.run(port=5001, debug=True)
+if __name__ == "__main__":
+    app.run(port=5001)
