@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
     Users,
@@ -7,6 +8,7 @@ import {
     CheckCircle,
     TrendingUp,
     BarChart3,
+    Search,
     PieChart as PieChartIcon
 } from 'lucide-react';
 import {
@@ -18,6 +20,7 @@ const Home = () => {
     const { user } = useAuth();
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     const isFaculty = user?.role === 'Faculty';
 
@@ -67,34 +70,46 @@ const Home = () => {
                     {isFaculty ? 'Student Dropout Prediction Analytics' : 'Student Progress'}
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-                    {isFaculty
-                        ? 'Real-time dropout risk assessment and demographic trends.'
-                        : 'Review your personalized academic risk analysis.'}
+                    Real-time dropout risk assessment and demographic trends.
                 </p>
             </div>
 
             <div className="stats-grid" style={{ marginBottom: '32px' }}>
-                <div className="card glass stat-card">
+                <div
+                    className="card glass stat-card"
+                    onClick={() => isFaculty && navigate('/student-details')}
+                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
+                >
                     <Users size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Total Students</p>
                     <p className="stat-value">{students.length}</p>
                 </div>
-                <div className="card glass stat-card">
+                <div
+                    className="card glass stat-card"
+                    onClick={() => isFaculty && navigate('/student-details?risk=High Risk')}
+                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
+                >
                     <AlertTriangle size={24} color="#f87171" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Critical Risk Students</p>
                     <p className="stat-value" style={{ color: '#f87171' }}>{highRiskCount}</p>
                 </div>
-                <div className="card glass stat-card">
+                <div
+                    className="card glass stat-card"
+                    onClick={() => isFaculty && navigate('/student-details?risk=Low Risk')}
+                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
+                >
                     <CheckCircle size={24} color="#4ade80" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Stable Students</p>
                     <p className="stat-value" style={{ color: '#4ade80' }}>{lowRiskCount}</p>
                 </div>
-                <div className="card glass stat-card">
-                    <TrendingUp size={24} color="#60a5fa" style={{ marginBottom: '12px' }} />
-                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Risk Index</p>
-                    <p className="stat-value" style={{ color: '#60a5fa' }}>
-                        {students.length ? Math.round((highRiskCount / students.length) * 100) : 0}%
-                    </p>
+                <div
+                    className="card glass stat-card"
+                    onClick={() => isFaculty && navigate('/student-details?risk=Not Predicted')}
+                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
+                >
+                    <Search size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
+                    <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Unpredicted Students</p>
+                    <p className="stat-value">{notPredictedCount}</p>
                 </div>
             </div>
 

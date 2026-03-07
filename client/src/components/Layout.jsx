@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
     LayoutDashboard,
@@ -7,12 +7,16 @@ import {
     LogOut,
     User,
     GraduationCap,
-    BrainCircuit
+    BrainCircuit,
+    AlertTriangle,
+    CheckCircle,
+    Search
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const location = useLocation();
 
     const handleLogout = () => {
         logout();
@@ -57,9 +61,21 @@ const Layout = ({ children }) => {
                                 <UserPlus size={20} />
                                 <span>Add Student</span>
                             </NavLink>
-                            <NavLink to="/student-details" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                            <NavLink to="/student-details" className={({ isActive }) => `nav-link ${isActive && !location.search ? 'active' : ''}`}>
                                 <GraduationCap size={20} />
                                 <span>Student Details</span>
+                            </NavLink>
+                            <NavLink to="/student-details?risk=High Risk" className={({ isActive }) => `nav-link ${isActive && location.search.includes('High%20Risk') ? 'active' : ''}`}>
+                                <AlertTriangle size={20} color="#f87171" />
+                                <span>Critical Students</span>
+                            </NavLink>
+                            <NavLink to="/student-details?risk=Low Risk" className={({ isActive }) => `nav-link ${isActive && location.search.includes('Low%20Risk') ? 'active' : ''}`}>
+                                <CheckCircle size={20} color="#4ade80" />
+                                <span>Stable Students</span>
+                            </NavLink>
+                            <NavLink to="/student-details?risk=Not Predicted" className={({ isActive }) => `nav-link ${isActive && location.search.includes('Not%20Predicted') ? 'active' : ''}`}>
+                                <Search size={20} color="var(--primary)" />
+                                <span>Unpredicted Students</span>
                             </NavLink>
                             <NavLink to="/predict" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                                 <BrainCircuit size={20} />

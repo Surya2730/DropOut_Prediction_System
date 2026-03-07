@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
-import { Search, Trash2, Edit, User, GraduationCap } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Search, Trash2, Edit, User, GraduationCap, AlertTriangle, CheckCircle, BrainCircuit } from 'lucide-react';
 
 const StudentDetails = () => {
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+
+    // Get risk filter from URL
+    const searchParams = new URLSearchParams(location.search);
+    const riskFilter = searchParams.get('risk');
 
     useEffect(() => {
         fetchStudents();
@@ -39,20 +44,51 @@ const StudentDetails = () => {
         navigate(`/edit-student/${id}`);
     };
 
-    const filteredStudents = students.filter(student =>
-        student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.registerNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.department.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredStudents = students
+        .filter(student => {
+            // First apply risk filter if present
+            if (riskFilter && student.riskStatus !== riskFilter) return false;
+
+            // Then apply search term filter
+            return (
+                student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.registerNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                student.department.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+        })
+        .sort((a, b) => {
+            const deptCompare = a.department.localeCompare(b.department);
+            if (deptCompare !== 0) return deptCompare;
+            return a.registerNo.localeCompare(b.registerNo);
+        });
 
     if (loading) return <div className="animate-pulse" style={{ textAlign: 'center', padding: '100px', color: 'var(--text-muted)' }}>Loading records...</div>;
+
+    const getPageTitle = () => {
+        if (riskFilter === 'High Risk') return 'Critical Risk Students';
+        if (riskFilter === 'Low Risk') return 'Stable Students';
+        if (riskFilter === 'Not Predicted') return 'Unpredicted Students';
+        return 'Student Details';
+    };
+
+    const getPageDescription = () => {
+        if (riskFilter === 'High Risk') return 'Prioritized list of students requiring immediate academic intervention.';
+        if (riskFilter === 'Low Risk') return 'List of students with consistent academic performance.';
+        if (riskFilter === 'Not Predicted') return 'Students who have not yet undergone AI risk assessment.';
+        return 'Administrative overview of institutional student records.';
+    };
 
     return (
         <div className="animate-fade" style={{ paddingBottom: '40px' }}>
             <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <div>
-                    <h1 style={{ fontSize: '2.25rem', marginBottom: '8px' }}>Student Details</h1>
-                    <p style={{ color: 'var(--text-muted)' }}>Administrative overview of institutional student records.</p>
+                    <h1 style={{ fontSize: '2.25rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        {riskFilter === 'High Risk' && <AlertTriangle size={32} color="#f87171" />}
+                        {riskFilter === 'Low Risk' && <CheckCircle size={32} color="#4ade80" />}
+                        {riskFilter === 'Not Predicted' && <Search size={32} color="var(--primary)" />}
+                        {getPageTitle()}
+                    </h1>
+                    <p style={{ color: 'var(--text-muted)' }}>{getPageDescription()}</p>
                 </div>
                 <div style={{ position: 'relative', width: '300px' }}>
                     <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
@@ -145,6 +181,22 @@ const StudentDetails = () => {
                                 </td>
                                 <td style={{ padding: '16px 24px' }}>
                                     <div style={{ display: 'flex', gap: '8px' }}>
+                                        {student.riskStatus === 'Not Predicted' && (
+                                            <button
+                                                onClick={() => navigate(`/predict?studentId=${student._id}`)}
+                                                style={{
+                                                    padding: '8px',
+                                                    borderRadius: '8px',
+                                                    background: 'rgba(168, 85, 247, 0.1)',
+                                                    color: '#a855f7',
+                                                    border: 'none',
+                                                    cursor: 'pointer'
+                                                }}
+                                                title="Run AI Prediction"
+                                            >
+                                                <BrainCircuit size={18} />
+                                            </button>
+                                        )}
                                         <button
                                             onClick={() => handleEdit(student._id)}
                                             style={{

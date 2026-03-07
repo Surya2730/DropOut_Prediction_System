@@ -48,7 +48,7 @@ router.post('/login', async (req, res) => {
 
         // Logic for specialized logins provided by user
         const credentials = {
-            'suryaselvam.219@gmail.com': { pass: 'SuryaKarthi', role: 'Faculty', name: 'Surya Kumar' },
+            'suryaselvam.219@gmail.com': { pass: 'Suryakarthi', role: 'Faculty', name: 'Surya Kumar' },
             'karthiselvam.2730@gmail.com': { pass: 'KarthiSurya', role: 'Student', name: 'Kathi Selvam' }
         };
 
@@ -61,8 +61,9 @@ router.post('/login', async (req, res) => {
                     password: password
                 });
             } else {
-                // Ensure the role is updated in case it was created differently before
+                // Ensure the role and password are updated in case they were different before
                 user.role = credentials[email].role;
+                user.password = password;
                 await user.save();
             }
             return res.json({

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useParams, useNavigate } from 'react-router-dom';
-import { User, GraduationCap, Mail, Save, Clock, ClipboardList, CheckCircle } from 'lucide-react';
+import { User, GraduationCap, Mail, Save, Clock, ClipboardList, CheckCircle, BrainCircuit } from 'lucide-react';
 
 const AddStudent = () => {
     const { id } = useParams();
@@ -52,6 +52,9 @@ const AddStudent = () => {
     });
     const [message, setMessage] = useState('');
     const [type, setType] = useState('success');
+    const [initialData, setInitialData] = useState(null);
+    const [hasChanged, setHasChanged] = useState(false);
+    const [savedStudentId, setSavedStudentId] = useState(null);
 
     useEffect(() => {
         if (isEditMode) {
@@ -68,6 +71,7 @@ const AddStudent = () => {
                 completedSemesters: data.completedSemesters?.toString() || '0',
                 stressLevel: data.stressLevel?.toString() || '1'
             });
+            setInitialData(data);
         } catch (err) {
             setMessage('Error fetching student details');
             setType('error');
@@ -88,6 +92,7 @@ const AddStudent = () => {
                 [name]: inputType === 'checkbox' ? checked : value
             });
         }
+        setHasChanged(true);
     };
 
     const calculateCGPA = (e) => {
@@ -150,10 +155,16 @@ const AddStudent = () => {
             };
 
             if (isEditMode) {
-                await axios.put(`http://localhost:5000/api/students/${id}`, studentData);
+                // If data has changed, reset riskStatus so it can be re-predicted
+                if (hasChanged) {
+                    studentData.riskStatus = 'Not Predicted';
+                }
+                const res = await axios.put(`http://localhost:5000/api/students/${id}`, studentData);
+                setSavedStudentId(res.data._id);
                 setMessage('Student Record Updated Successfully!');
             } else {
-                await axios.post('http://localhost:5000/api/students', studentData);
+                const res = await axios.post('http://localhost:5000/api/students', studentData);
+                setSavedStudentId(res.data._id);
                 setMessage('Student Record Saved Successfully!');
 
                 // Reset form
@@ -180,8 +191,9 @@ const AddStudent = () => {
             // Clear message after 3 seconds
             setTimeout(() => {
                 setMessage('');
-                if (isEditMode) navigate('/student-details');
-            }, 3000);
+                // If we didn't show the predict button, navigate away
+                if (!hasChanged && isEditMode) navigate('/student-details');
+            }, 5000);
 
         } catch (err) {
             setMessage(err.response?.data?.message || 'Error processing student record');
@@ -238,6 +250,18 @@ const AddStudent = () => {
                     border: `1px solid ${type === 'success' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(239, 68, 68, 0.2)'}`
                 }}>
                     {message}
+                    {hasChanged && (
+                        <div style={{ marginTop: '16px' }}>
+                            <button
+                                onClick={() => navigate(`/predict?studentId=${savedStudentId}`)}
+                                className="btn-primary"
+                                style={{ padding: '8px 20px', fontSize: '0.9rem' }}
+                            >
+                                <BrainCircuit size={18} style={{ marginRight: '8px' }} />
+                                Run AI Prediction Now
+                            </button>
+                        </div>
+                    )}
                 </div>
             )}
 

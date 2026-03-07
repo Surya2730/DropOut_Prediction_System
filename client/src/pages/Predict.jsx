@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useLocation } from 'react-router-dom';
 import { BrainCircuit, Search, GraduationCap, AlertCircle, CheckCircle2 } from 'lucide-react';
 
 const Predict = () => {
@@ -8,18 +9,61 @@ const Predict = () => {
     const [loading, setLoading] = useState(false);
     const [result, setResult] = useState(null);
     const [error, setError] = useState('');
+    const location = useLocation();
 
     useEffect(() => {
         const fetchStudents = async () => {
             try {
                 const res = await axios.get('http://localhost:5000/api/students');
-                setStudents(res.data);
+                const sortedStudents = res.data.sort((a, b) => {
+                    const deptCompare = a.department.localeCompare(b.department);
+                    if (deptCompare !== 0) return deptCompare;
+                    return a.registerNo.localeCompare(b.registerNo);
+                });
+                setStudents(sortedStudents);
+
+                // Check for studentId in URL to auto-trigger prediction
+                const params = new URLSearchParams(location.search);
+                const studentId = params.get('studentId');
+                if (studentId) {
+                    setSelectedId(studentId);
+                    // We need to wait for state to update, or just use the student object directly
+                    const student = sortedStudents.find(s => s._id === studentId);
+                    if (student) {
+                        runAutoPredict(student);
+                    }
+                }
             } catch (err) {
                 console.error(err);
             }
         };
         fetchStudents();
-    }, []);
+    }, [location.search]);
+
+    const runAutoPredict = async (student) => {
+        setLoading(true);
+        setError('');
+        setResult(null);
+        try {
+            const res = await axios.post('http://localhost:5000/api/predict', student);
+            setResult({
+                ...student,
+                riskStatus: res.data.riskStatus
+            });
+            // Refresh student list
+            const updatedList = await axios.get('http://localhost:5000/api/students');
+            const sortedStudents = updatedList.data.sort((a, b) => {
+                const deptCompare = a.department.localeCompare(b.department);
+                if (deptCompare !== 0) return deptCompare;
+                return a.registerNo.localeCompare(b.registerNo);
+            });
+            setStudents(sortedStudents);
+        } catch (err) {
+            setError('Prediction failed. Please try again.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handlePredict = async (e) => {
         e.preventDefault();
@@ -38,7 +82,12 @@ const Predict = () => {
             });
             // Refresh student list to update riskStatus
             const updatedList = await axios.get('http://localhost:5000/api/students');
-            setStudents(updatedList.data);
+            const sortedStudents = updatedList.data.sort((a, b) => {
+                const deptCompare = a.department.localeCompare(b.department);
+                if (deptCompare !== 0) return deptCompare;
+                return a.registerNo.localeCompare(b.registerNo);
+            });
+            setStudents(sortedStudents);
         } catch (err) {
             setError('Prediction failed. Please try again.');
         } finally {
