@@ -6,6 +6,6 @@ export default defineConfig({
     plugins: [react()],
     server: {
         port: 3000, // Optional: keeps it on the same port CRA used (3000)
-        open: true,
+        open: false,
     },
 });

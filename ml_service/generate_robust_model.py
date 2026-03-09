@@ -83,31 +83,41 @@ def generate_robust_data(n_samples=5000):
     
     y = []
     for i in range(n_samples):
-        # Risk Logic
+        # Stricter Risk Logic with higher weights
         risk_score = 0
         
-        # Primary Factors (Strong weight)
-        if X[i, 9] < 5.5: risk_score += 4  # Low CGPA
-        elif X[i, 9] < 7.0: risk_score += 2
+        # Primary Factors (High weight)
+        if X[i, 9] < 4.5: risk_score += 5      # Very low CGPA
+        elif X[i, 9] < 5.5: risk_score += 4    # Low CGPA
+        elif X[i, 9] < 6.5: risk_score += 2    # Below average CGPA
             
-        if X[i, 11] < 65: risk_score += 4 # Low Attendance
-        elif X[i, 11] < 75: risk_score += 2
+        if X[i, 11] < 50: risk_score += 5      # Very low Attendance
+        elif X[i, 11] < 65: risk_score += 4    # Low Attendance
+        elif X[i, 11] < 75: risk_score += 2    # Below standard Attendance
             
-        if X[i, 12] > 3: risk_score += 4  # High Backlogs
-        elif X[i, 12] > 1: risk_score += 2
+        if X[i, 12] > 5: risk_score += 5       # Many backlogs
+        elif X[i, 12] > 3: risk_score += 4     # Several backlogs
+        elif X[i, 12] > 1: risk_score += 2     # Some backlogs
             
         # Social & Mental Factors
-        if X[i, 29] == 1: risk_score += 2 # Depression
-        if X[i, 28] > 4: risk_score += 1  # High Stress
-        if X[i, 13] < 50000: risk_score += 1 # Very low income
+        if X[i, 29] == 1: risk_score += 3      # Depression
+        if X[i, 28] > 4: risk_score += 2       # High Stress
+        if X[i, 28] == 5: risk_score += 1      # Extreme Stress
             
-        # Protective Factors (Negative points)
-        if X[i, 19] == 1: risk_score -= 1 # Lab participation
-        if X[i, 25] == 1: risk_score -= 1 # Internship
+        # Financial Factors
+        if X[i, 13] < 50000: risk_score += 1   # Very low income
+        if X[i, 14] == 1: risk_score += 1      # PWD status
         
-        # Binary target: 1 if risk_score >= 5 else 0
-        # This threshold creates enough separation
-        y.append(1 if risk_score >= 5 else 0)
+        # Protective Factors (Negative points)
+        if X[i, 19] == 1: risk_score -= 2      # Lab participation
+        if X[i, 25] == 1: risk_score -= 2      # Internship
+        if X[i, 15] == 1: risk_score -= 1      # Academic participation
+        if X[i, 21] == 1: risk_score -= 1      # Event winner
+        if X[i, 26] == 1: risk_score -= 1      # Paid internship
+        
+        # Binary target: 1 if risk_score >= 6 else 0 (stricter threshold)
+        # This creates better separation between low and high risk
+        y.append(1 if risk_score >= 6 else 0)
         
     return X, np.array(y)
 
@@ -128,5 +138,6 @@ pipeline.fit(X, y)
 # 4. Save the pipeline
 joblib.dump(pipeline, "robust_dropout_model.pkl")
 
-print("Successfully generated robust_dropout_model.pkl")
+print("Successfully generated robust_dropout_model.pkl (Stricter Criteria)")
 print(f"Data balance: {np.mean(y)*100:.2f}% High Risk samples")
+print(f"Risk Threshold: >= 6 points")

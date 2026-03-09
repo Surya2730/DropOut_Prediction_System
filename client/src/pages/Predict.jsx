@@ -14,7 +14,7 @@ const Predict = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/students');
+                const res = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
                 const sortedStudents = res.data.sort((a, b) => {
                     const deptCompare = a.department.localeCompare(b.department);
                     if (deptCompare !== 0) return deptCompare;
@@ -46,12 +46,22 @@ const Predict = () => {
         setResult(null);
         try {
             const res = await axios.post('http://localhost:5000/api/predict', student);
+
+            // Check if the response indicates the student is not verified
+            if (res.data.riskStatus === 'Not Verified') {
+                setError(res.data.message || 'Student must be fully verified before prediction');
+                return;
+            }
+
             setResult({
                 ...student,
-                riskStatus: res.data.riskStatus
+                riskStatus: res.data.riskStatus,
+                message: res.data.message,
+                heuristicScore: res.data.heuristicScore,
+                threshold: res.data.threshold
             });
             // Refresh student list
-            const updatedList = await axios.get('http://localhost:5000/api/students');
+            const updatedList = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
             const sortedStudents = updatedList.data.sort((a, b) => {
                 const deptCompare = a.department.localeCompare(b.department);
                 if (deptCompare !== 0) return deptCompare;
@@ -59,7 +69,12 @@ const Predict = () => {
             });
             setStudents(sortedStudents);
         } catch (err) {
-            setError('Prediction failed. Please try again.');
+            // Handle different types of errors
+            if (err.response && err.response.status === 400 && err.response.data.riskStatus === 'Not Verified') {
+                setError(err.response.data.message || 'Student must be fully verified before prediction');
+            } else {
+                setError('Prediction failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -76,12 +91,22 @@ const Predict = () => {
         try {
             const student = students.find(s => s._id === selectedId);
             const res = await axios.post('http://localhost:5000/api/predict', student);
+
+            // Check if the response indicates the student is not verified
+            if (res.data.riskStatus === 'Not Verified') {
+                setError(res.data.message || 'Student must be fully verified before prediction');
+                return;
+            }
+
             setResult({
                 ...student,
-                riskStatus: res.data.riskStatus
+                riskStatus: res.data.riskStatus,
+                message: res.data.message,
+                heuristicScore: res.data.heuristicScore,
+                threshold: res.data.threshold
             });
             // Refresh student list to update riskStatus
-            const updatedList = await axios.get('http://localhost:5000/api/students');
+            const updatedList = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
             const sortedStudents = updatedList.data.sort((a, b) => {
                 const deptCompare = a.department.localeCompare(b.department);
                 if (deptCompare !== 0) return deptCompare;
@@ -89,7 +114,12 @@ const Predict = () => {
             });
             setStudents(sortedStudents);
         } catch (err) {
-            setError('Prediction failed. Please try again.');
+            // Handle different types of errors
+            if (err.response && err.response.status === 400 && err.response.data.riskStatus === 'Not Verified') {
+                setError(err.response.data.message || 'Student must be fully verified before prediction');
+            } else {
+                setError('Prediction failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

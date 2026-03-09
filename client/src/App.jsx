@@ -5,19 +5,31 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import Layout from './components/Layout';
 import Login from './pages/Login';
 import Home from './pages/Home';
-import AddStudent from './pages/AddStudent';
 import StudentDetails from './pages/StudentDetails';
+import EditStudent from './pages/EditStudent';
 import Predict from './pages/Predict';
-import './index.css';
+import StudentDashboard from './pages/StudentDashboard';
+import Verification from './pages/Verification';
+import AddedStudents from './pages/AddedStudents';
+import ManageStudents from './pages/ManageStudents.jsx';
+import VerifiedStudents from './pages/VerifiedStudents';
 
 const ProtectedRoute = ({ children, facultyOnly = false }) => {
   const { user, loading } = useAuth();
 
   if (loading) return null;
   if (!user) return <Navigate to="/login" />;
-  if (facultyOnly && user.role !== 'Faculty') return <Navigate to="/" />;
+
+  const isCoordinator = ['AcademicCoordinator', 'LabCoordinator', 'PlacementCoordinator'].includes(user.role);
+
+  if (facultyOnly && user.role !== 'Faculty' && !isCoordinator) return <Navigate to="/" />;
 
   return <Layout>{children}</Layout>;
+};
+
+const DashboardSelector = () => {
+  const { user } = useAuth();
+  return user?.role === 'Student' ? <StudentDashboard /> : <Home />;
 };
 
 function App() {
@@ -32,27 +44,36 @@ function App() {
 
             <Route path="/" element={
               <ProtectedRoute>
-                <Home />
+                <DashboardSelector />
               </ProtectedRoute>
             } />
 
-            <Route path="/add-student" element={
+            <Route path="/faculty/verification" element={
               <ProtectedRoute facultyOnly>
-                <AddStudent />
+                <Verification />
               </ProtectedRoute>
             } />
 
-            <Route path="/edit-student/:id" element={
+            <Route path="/faculty/manage-students" element={
               <ProtectedRoute facultyOnly>
-                <AddStudent />
+                <ManageStudents />
               </ProtectedRoute>
             } />
 
-            <Route path="/student-details" element={
+            <Route path="/faculty/added-students" element={
               <ProtectedRoute facultyOnly>
-                <StudentDetails />
+                <AddedStudents />
               </ProtectedRoute>
             } />
+
+            <Route path="/faculty/verified-students" element={
+              <ProtectedRoute facultyOnly>
+                <VerifiedStudents />
+              </ProtectedRoute>
+            } />
+
+            <Route path="/student-details" element={<ProtectedRoute facultyOnly><StudentDetails /></ProtectedRoute>} />
+            <Route path="/edit-student/:id" element={<ProtectedRoute facultyOnly><EditStudent /></ProtectedRoute>} />
 
             <Route path="/predict" element={
               <ProtectedRoute facultyOnly>

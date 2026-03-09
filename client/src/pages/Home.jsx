@@ -9,7 +9,8 @@ import {
     TrendingUp,
     BarChart3,
     Search,
-    PieChart as PieChartIcon
+    PieChart as PieChartIcon,
+    UserPlus
 } from 'lucide-react';
 import {
     PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend,
@@ -61,6 +62,16 @@ const Home = () => {
 
     const barData = Object.values(deptStats);
 
+    // Data for Department-wise (Pie Chart) - Total students per department
+    const deptPieData = Object.values(deptStats).map(d => ({
+        name: d.department,
+        value: d.highRisk + d.lowRisk,
+        highRisk: d.highRisk,
+        lowRisk: d.lowRisk
+    })).filter(d => d.value > 0);
+
+    const COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#f472b6'];
+
     if (loading) return <div className="animate-pulse" style={{ textAlign: 'center', padding: '100px', color: 'var(--text-muted)' }}>Analyzing institutional data...</div>;
 
     return (
@@ -74,7 +85,7 @@ const Home = () => {
                 </p>
             </div>
 
-            <div className="stats-grid" style={{ marginBottom: '32px' }}>
+            <div className="stats-grid" style={{ marginBottom: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
                 <div
                     className="card glass stat-card"
                     onClick={() => isFaculty && navigate('/student-details')}
@@ -111,6 +122,17 @@ const Home = () => {
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Unpredicted Students</p>
                     <p className="stat-value">{notPredictedCount}</p>
                 </div>
+                {isFaculty && (
+                    <div
+                        className="card glass stat-card"
+                        onClick={() => navigate('/faculty/manage-students')}
+                        style={{ cursor: 'pointer' }}
+                    >
+                        <UserPlus size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
+                        <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Manage Students</p>
+                        <p className="stat-value">Add Accounts</p>
+                    </div>
+                )}
             </div>
 
             <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '32px' }}>
@@ -146,26 +168,38 @@ const Home = () => {
                     </div>
                 </div>
 
-                {/* Departmental Analytics Bar Chart */}
+                {/* Departmental Analytics Pie Chart */}
                 <div className="card glass" style={{ height: '450px', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
-                        <BarChart3 size={20} color="var(--primary)" />
-                        <h3 style={{ fontSize: '1.25rem' }}>Departmental Risk Breakdown</h3>
+                        <PieChartIcon size={20} color="var(--primary)" />
+                        <h3 style={{ fontSize: '1.25rem' }}>Departmental Distribution</h3>
                     </div>
                     <div style={{ flex: 1 }}>
                         <ResponsiveContainer width="100%" height="100%">
-                            <BarChart data={barData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                                <XAxis dataKey="department" stroke="#94a3b8" fontSize={12} />
-                                <YAxis stroke="#94a3b8" fontSize={12} />
+                            <PieChart>
+                                <Pie
+                                    data={deptPieData}
+                                    cx="50%"
+                                    cy="50%"
+                                    innerRadius={80}
+                                    outerRadius={120}
+                                    paddingAngle={5}
+                                    dataKey="value"
+                                >
+                                    {deptPieData.map((entry, index) => (
+                                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                                    ))}
+                                </Pie>
                                 <Tooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                    contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
+                                    formatter={(value, name, props) => [
+                                        `Total: ${value} Students\nHigh Risk: ${props.payload.highRisk}\nLow Risk: ${props.payload.lowRisk}`,
+                                        name
+                                    ]}
+                                    contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px', whiteSpace: 'pre-line' }}
+                                    itemStyle={{ color: '#fff' }}
                                 />
-                                <Legend />
-                                <Bar dataKey="highRisk" name="High Risk" fill="#f87171" radius={[4, 4, 0, 0]} />
-                                <Bar dataKey="lowRisk" name="Low Risk" fill="#4ade80" radius={[4, 4, 0, 0]} />
-                            </BarChart>
+                                <Legend verticalAlign="bottom" height={36} />
+                            </PieChart>
                         </ResponsiveContainer>
                     </div>
                 </div>

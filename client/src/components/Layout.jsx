@@ -10,7 +10,10 @@ import {
     BrainCircuit,
     AlertTriangle,
     CheckCircle,
-    Search
+    Search,
+    Users,
+    History,
+    ClipboardCheck
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -57,12 +60,8 @@ const Layout = ({ children }) => {
 
                     {isFaculty && (
                         <>
-                            <NavLink to="/add-student" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
-                                <UserPlus size={20} />
-                                <span>Add Student</span>
-                            </NavLink>
-                            <NavLink to="/student-details" className={({ isActive }) => `nav-link ${isActive && !location.search ? 'active' : ''}`}>
-                                <GraduationCap size={20} />
+                            <NavLink to="/student-details" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <Users size={20} />
                                 <span>Student Details</span>
                             </NavLink>
                             <NavLink to="/student-details?risk=High Risk" className={({ isActive }) => `nav-link ${isActive && location.search.includes('High%20Risk') ? 'active' : ''}`}>
@@ -80,6 +79,27 @@ const Layout = ({ children }) => {
                             <NavLink to="/predict" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                                 <BrainCircuit size={20} />
                                 <span>Prediction</span>
+                            </NavLink>
+                            <NavLink to="/faculty/manage-students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <UserPlus size={20} />
+                                <span>Manage Students</span>
+                            </NavLink>
+                            <NavLink to="/faculty/added-students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <Users size={20} />
+                                <span>Added Students</span>
+                            </NavLink>
+                        </>
+                    )}
+
+                    {['AcademicCoordinator', 'LabCoordinator', 'PlacementCoordinator'].includes(user?.role) && (
+                        <>
+                            <NavLink to="/faculty/verification" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <ClipboardCheck size={20} />
+                                <span>Pending Approval</span>
+                            </NavLink>
+                            <NavLink to="/faculty/verified-students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
+                                <History size={20} />
+                                <span>Verification History</span>
                             </NavLink>
                         </>
                     )}

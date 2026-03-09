@@ -19,6 +19,10 @@ const studentSchema = mongoose.Schema({
         type: String,
         required: true,
     },
+    year: {
+        type: String,
+        default: '1st Year'
+    },
     // Academic Details
     attendance: { type: Number, required: true },
     completedSemesters: { type: Number, default: 0 },
@@ -38,6 +42,8 @@ const studentSchema = mongoose.Schema({
     // Socio-Economic Details
     annualIncome: { type: Number, default: 0 },
     isPWD: { type: Boolean, default: false },
+    hasUnpaidFees: { type: Boolean, default: false },
+    unpaidAmount: { type: Number, default: 0 },
 
     // Academic Engagement
     academicParticipation: { type: Boolean, default: false },
@@ -77,6 +83,33 @@ const studentSchema = mongoose.Schema({
     stressLevel: { type: Number, min: 1, max: 5, default: 1 },
     depressionSigns: { type: Boolean, default: false },
 
+    // Verification Details
+    academicVerification: {
+        type: String,
+        enum: ['Pending', 'Verified', 'Rejected'],
+        default: 'Pending'
+    },
+    labVerification: {
+        type: String,
+        enum: ['Pending', 'Verified', 'Rejected', 'N/A'],
+        default: 'Pending'
+    },
+    placementVerification: {
+        type: String,
+        enum: ['Pending', 'Verified', 'Rejected', 'N/A'],
+        default: 'Pending'
+    },
+    academicRemark: { type: String, default: '' },
+    labRemark: { type: String, default: '' },
+    placementRemark: { type: String, default: '' },
+    incomeCertificate: {
+        type: String,
+        default: ''
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
+    },
     riskStatus: {
         type: String,
         enum: ['Low Risk', 'High Risk', 'Not Predicted'],

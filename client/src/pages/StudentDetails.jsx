@@ -57,10 +57,37 @@ const StudentDetails = () => {
             );
         })
         .sort((a, b) => {
-            const deptCompare = a.department.localeCompare(b.department);
+            // 1. Department wise (Alphabetical / Ascending)
+            const deptA = a.department || '';
+            const deptB = b.department || '';
+            const deptCompare = deptA.localeCompare(deptB);
             if (deptCompare !== 0) return deptCompare;
-            return a.registerNo.localeCompare(b.registerNo);
+
+            // 2. Year wise descending (e.g., '4th Year' before '1st Year')
+            const yearA = a.year || '';
+            const yearB = b.year || '';
+            const yearCompare = yearB.localeCompare(yearA);
+            if (yearCompare !== 0) return yearCompare;
+
+            // 3. Roll number ascending
+            const regA = a.registerNo || '';
+            const regB = b.registerNo || '';
+            return regA.localeCompare(regB);
         });
+
+    // Group students by department and year
+    const groupedStudents = filteredStudents.reduce((groups, student) => {
+        const dept = student.department || 'Not Set';
+        const year = student.year || 'Not Set';
+        if (!groups[dept]) {
+            groups[dept] = {};
+        }
+        if (!groups[dept][year]) {
+            groups[dept][year] = [];
+        }
+        groups[dept][year].push(student);
+        return groups;
+    }, {});
 
     if (loading) return <div className="animate-pulse" style={{ textAlign: 'center', padding: '100px', color: 'var(--text-muted)' }}>Loading records...</div>;
 
@@ -121,113 +148,138 @@ const StudentDetails = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredStudents.length === 0 ? (
+                        {Object.keys(groupedStudents).length === 0 ? (
                             <tr><td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>No student records found.</td></tr>
-                        ) : filteredStudents.map(student => (
-                            <tr key={student._id} style={{ borderTop: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }} className="table-row">
-                                <td style={{ padding: '16px 24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                                        <div style={{
-                                            width: '40px',
-                                            height: '40px',
-                                            borderRadius: '50%',
-                                            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
-                                            display: 'flex',
-                                            alignItems: 'center',
-                                            justifyContent: 'center',
-                                            color: 'white',
-                                            fontWeight: '700'
-                                        }}>
-                                            {student.name.charAt(0)}
-                                        </div>
-                                        <div>
-                                            <div style={{ fontWeight: '600', color: 'white' }}>{student.name}</div>
-                                            <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: '500' }}>{student.registerNo}</div>
-                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{student.email}</div>
-                                        </div>
-                                    </div>
-                                </td>
-                                <td style={{ padding: '16px 24px' }}>
-                                    <div style={{ fontWeight: '500' }}>{student.department}</div>
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{student.attendance}% Attendance</div>
-                                </td>
-                                <td style={{ padding: '16px 24px' }}>
-                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                        <div style={{ padding: '4px 8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '6px', color: '#60a5fa', fontSize: '0.85rem', fontWeight: '600' }}>
-                                            CGPA {student.cgpa}
-                                        </div>
-                                        {student.backlogs > 0 && (
-                                            <div style={{ padding: '4px 8px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', color: '#f87171', fontSize: '0.85rem', fontWeight: '600' }}>
-                                                {student.backlogs} Backlogs
-                                            </div>
-                                        )}
-                                    </div>
-                                </td>
-                                <td style={{ padding: '16px 24px' }}>
-                                    <span style={{
-                                        padding: '6px 12px',
-                                        borderRadius: '20px',
-                                        fontSize: '0.8rem',
-                                        fontWeight: '700',
-                                        background: student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.1)' :
-                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
-                                        color: student.riskStatus === 'High Risk' ? '#f87171' :
-                                            student.riskStatus === 'Low Risk' ? '#4ade80' : 'var(--text-muted)',
-                                        border: `1px solid ${student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.2)' :
-                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.1)'}`
-                                    }}>
-                                        {student.riskStatus || 'Not Analyzed'}
-                                    </span>
-                                </td>
-                                <td style={{ padding: '16px 24px' }}>
-                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                        {student.riskStatus === 'Not Predicted' && (
-                                            <button
-                                                onClick={() => navigate(`/predict?studentId=${student._id}`)}
-                                                style={{
-                                                    padding: '8px',
-                                                    borderRadius: '8px',
-                                                    background: 'rgba(168, 85, 247, 0.1)',
-                                                    color: '#a855f7',
-                                                    border: 'none',
-                                                    cursor: 'pointer'
-                                                }}
-                                                title="Run AI Prediction"
-                                            >
-                                                <BrainCircuit size={18} />
-                                            </button>
-                                        )}
-                                        <button
-                                            onClick={() => handleEdit(student._id)}
-                                            style={{
-                                                padding: '8px',
-                                                borderRadius: '8px',
-                                                background: 'rgba(96, 165, 250, 0.1)',
-                                                color: '#60a5fa',
-                                                border: 'none',
-                                                cursor: 'pointer'
-                                            }}
-                                            title="Edit student record"
-                                        >
-                                            <Edit size={18} />
-                                        </button>
-                                        <button
-                                            onClick={() => handleDelete(student._id)}
-                                            style={{
-                                                padding: '8px',
-                                                borderRadius: '8px',
-                                                background: 'rgba(239,68,68,0.1)',
-                                                color: '#f87171',
-                                                border: 'none',
-                                                cursor: 'pointer'
-                                            }}
-                                            title="Delete student record"
-                                        >
-                                            <Trash2 size={18} />
-                                        </button>
-                                    </div>
-                                </td>
-                            </tr>
+                        ) : Object.keys(groupedStudents).sort().map(dept => (
+                            <React.Fragment key={dept}>
+                                <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                                    <td colSpan="5" style={{ padding: '16px 24px', fontWeight: '700', color: 'var(--primary)', fontSize: '1.1rem', borderTop: '2px solid rgba(255,255,255,0.1)' }}>
+                                        {dept}
+                                    </td>
+                                </tr>
+                                {Object.keys(groupedStudents[dept]).sort((a, b) => b.localeCompare(a)).map(year => (
+                                    <React.Fragment key={year}>
+                                        <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                                            <td colSpan="5" style={{ padding: '12px 24px 8px 48px', fontWeight: '600', color: 'var(--text)', fontSize: '0.95rem' }}>
+                                                {year}
+                                            </td>
+                                        </tr>
+                                        {groupedStudents[dept][year].map(student => (
+                                            <tr key={student._id} style={{ borderTop: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }} className="table-row">
+                                                <td style={{ padding: '16px 24px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                                        <div style={{
+                                                            width: '40px',
+                                                            height: '40px',
+                                                            borderRadius: '50%',
+                                                            background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)',
+                                                            display: 'flex',
+                                                            alignItems: 'center',
+                                                            justifyContent: 'center',
+                                                            color: 'white',
+                                                            fontWeight: '700'
+                                                        }}>
+                                                            {student.name.charAt(0)}
+                                                        </div>
+                                                        <div>
+                                                            <div style={{ fontWeight: '600', color: 'white' }}>{student.name}</div>
+                                                            <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: '500' }}>{student.registerNo}</div>
+                                                            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{student.email}</div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td style={{ padding: '16px 24px' }}>
+                                                    <div style={{ fontWeight: '500' }}>{student.department}</div>
+                                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{student.attendance}% Attendance</div>
+                                                </td>
+                                                <td style={{ padding: '16px 24px' }}>
+                                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                                        <div style={{ padding: '4px 8px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: '6px', color: '#60a5fa', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                            CGPA {student.cgpa}
+                                                        </div>
+                                                        {student.backlogs > 0 && (
+                                                            <div style={{ padding: '4px 8px', background: 'rgba(239, 68, 68, 0.1)', borderRadius: '6px', color: '#f87171', fontSize: '0.85rem', fontWeight: '600' }}>
+                                                                {student.backlogs} Backlogs
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                </td>
+                                                <td style={{ padding: '16px 24px' }}>
+                                                    <span style={{
+                                                        padding: '6px 12px',
+                                                        borderRadius: '20px',
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: '700',
+                                                        background: student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.1)' :
+                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
+                                                        color: student.riskStatus === 'High Risk' ? '#f87171' :
+                                                            student.riskStatus === 'Low Risk' ? '#4ade80' : 'var(--text-muted)',
+                                                        border: `1px solid ${student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.2)' :
+                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.1)'}`
+                                                    }}>
+                                                        {student.riskStatus || 'Not Analyzed'}
+                                                    </span>
+                                                </td>
+                                                <td style={{ padding: '16px 24px' }}>
+                                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                                        {student.riskStatus === 'Not Predicted' && (
+                                                            <button
+                                                                onClick={() => {
+                                                                    if (student.isVerified) {
+                                                                        navigate(`/predict?studentId=${student._id}`);
+                                                                    } else {
+                                                                        alert('Cannot predict: This student has not been cleared by all coordinators (Academic, Lab, and Placement).');
+                                                                    }
+                                                                }}
+                                                                style={{
+                                                                    padding: '8px',
+                                                                    borderRadius: '8px',
+                                                                    background: student.isVerified ? 'rgba(168, 85, 247, 0.1)' : 'rgba(255,255,255,0.05)',
+                                                                    color: student.isVerified ? '#a855f7' : 'var(--text-muted)',
+                                                                    border: 'none',
+                                                                    cursor: student.isVerified ? 'pointer' : 'not-allowed',
+                                                                    opacity: student.isVerified ? 1 : 0.5
+                                                                }}
+                                                                title={student.isVerified ? "Run AI Prediction" : "Pending Coordinator Clearances"}
+                                                            >
+                                                                <BrainCircuit size={18} />
+                                                            </button>
+                                                        )}
+                                                        <button
+                                                            onClick={() => handleEdit(student._id)}
+                                                            style={{
+                                                                padding: '8px',
+                                                                borderRadius: '8px',
+                                                                background: 'rgba(96, 165, 250, 0.1)',
+                                                                color: '#60a5fa',
+                                                                border: 'none',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                            title="Edit student record"
+                                                        >
+                                                            <Edit size={18} />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleDelete(student._id)}
+                                                            style={{
+                                                                padding: '8px',
+                                                                borderRadius: '8px',
+                                                                background: 'rgba(239,68,68,0.1)',
+                                                                color: '#f87171',
+                                                                border: 'none',
+                                                                cursor: 'pointer'
+                                                            }}
+                                                            title="Delete student record"
+                                                        >
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </React.Fragment>
+                                ))}
+                            </React.Fragment>
                         ))}
                     </tbody>
                 </table>
