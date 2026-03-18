@@ -140,9 +140,16 @@ const StudentDashboard = () => {
                 isVerified: false
             });
 
+            // update local state with server response
             setStudentData(prev => ({ ...prev, ...res.data }));
-            // Also live-update the sidebar name
-            if (studentData.name) updateUser({ name: studentData.name });
+            // live-update the sidebar name using returned name (guaranteed fresh)
+            if (res.data.name) {
+                updateUser({ name: res.data.name });
+            } else if (studentData.name) {
+                // fallback if server didn't echo name
+                updateUser({ name: studentData.name });
+            }
+
             setStatus({ type: 'success', message: 'Profile Consolidated! Your data is now being reviewed by coordinators.' });
             window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (err) {
@@ -163,11 +170,11 @@ const StudentDashboard = () => {
     );
 
     const inputStyle = {
-        background: 'rgba(15, 23, 42, 0.4)',
-        border: '1px solid var(--glass-border)',
+        background: '#f8fafc',
+        border: '1.5px solid var(--glass-border)',
         borderRadius: '12px',
         padding: '14px',
-        color: 'white',
+        color: 'var(--text-main)',
         width: '100%',
         marginTop: '8px',
         transition: 'all 0.3s ease'
@@ -194,7 +201,7 @@ const StudentDashboard = () => {
     const isPlacementLocked = studentData?.placementVerification === 'Verified' || (hasAnyRejection && studentData?.placementVerification !== 'Rejected');
 
     // Helper for input styles mapping
-    const getLockedStyle = (isLocked, baseStyle = inputStyle) => isLocked ? { ...baseStyle, opacity: 0.6, pointerEvents: 'none', background: 'rgba(15, 23, 42, 0.2)' } : baseStyle;
+    const getLockedStyle = (isLocked, baseStyle = inputStyle) => isLocked ? { ...baseStyle, opacity: 0.6, pointerEvents: 'none', background: 'rgba(15, 23, 42, 0.08)' } : baseStyle;
 
     return (
         <div className="animate-fade" style={{ maxWidth: '1300px', margin: '0 auto', padding: '10px' }}>
@@ -211,27 +218,45 @@ const StudentDashboard = () => {
                         Student Central
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginTop: '12px', maxWidth: '500px' }}>
-                        Welcome {user?.name || 'Student'}. Level: {studentData?.year || '1st Year'}
+                        Welcome {user?.name || 'Student'}. Year: {studentData?.year || '1st Year'}
                     </p>
                 </div>
 
                 <div className="glass" style={{ padding: '24px', borderRadius: '24px', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '240px' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
-                        {['Academic', 'Lab', 'Placement'].map((label, idx) => {
-                            const status = idx === 0 ? studentData?.academicVerification : idx === 1 ? studentData?.labVerification : studentData?.placementVerification;
-                            if (status === 'N/A') return null; // Filter out N/A dots completely
+                        {/* Always show Academic */}
+                        <div title={`Academic: ${studentData?.academicVerification}`} style={{
+                            width: '14px',
+                            height: '14px',
+                            borderRadius: '50%',
+                            background: getVerificationColor(studentData?.academicVerification),
+                            boxShadow: studentData?.academicVerification && studentData?.academicVerification !== 'Pending' ? `0 0 8px ${getVerificationColor(studentData?.academicVerification)}` : 'none',
+                            border: '2px solid rgba(0,0,0,0.2)'
+                        }}></div>
 
-                            return (
-                                <div key={label} title={`${label}: ${status}`} style={{
-                                    width: '14px',
-                                    height: '14px',
-                                    borderRadius: '50%',
-                                    background: getVerificationColor(status),
-                                    boxShadow: status && status !== 'Pending' ? `0 0 8px ${getVerificationColor(status)}` : 'none',
-                                    border: '2px solid rgba(0,0,0,0.2)'
-                                }}></div>
-                            );
-                        })}
+                        {/* Lab Dot - Only if participation is true and status is not N/A */}
+                        {studentData?.specialLabParticipation && studentData?.labVerification !== 'N/A' && (
+                            <div title={`Lab: ${studentData?.labVerification}`} style={{
+                                width: '14px',
+                                height: '14px',
+                                borderRadius: '50%',
+                                background: getVerificationColor(studentData?.labVerification),
+                                boxShadow: studentData?.labVerification && studentData?.labVerification !== 'Pending' ? `0 0 8px ${getVerificationColor(studentData?.labVerification)}` : 'none',
+                                border: '2px solid rgba(0,0,0,0.2)'
+                            }}></div>
+                        )}
+
+                        {/* Placement Dot - Only if interested and status is not N/A */}
+                        {studentData?.isInterestedInNIP && studentData?.placementVerification !== 'N/A' && (
+                            <div title={`Placement: ${studentData?.placementVerification}`} style={{
+                                width: '14px',
+                                height: '14px',
+                                borderRadius: '50%',
+                                background: getVerificationColor(studentData?.placementVerification),
+                                boxShadow: studentData?.placementVerification && studentData?.placementVerification !== 'Pending' ? `0 0 8px ${getVerificationColor(studentData?.placementVerification)}` : 'none',
+                                border: '2px solid rgba(0,0,0,0.2)'
+                            }}></div>
+                        )}
                     </div>
                     <div>
                         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>Security Status</p>
@@ -262,8 +287,8 @@ const StudentDashboard = () => {
                         display: 'flex',
                         justifyContent: 'space-between',
                         borderRadius: '24px',
-                        background: 'rgba(30, 41, 59, 0.2)',
-                        border: '1px solid rgba(255, 255, 255, 0.05)'
+                        background: 'rgba(99, 102, 241, 0.05)',
+                        border: '1px solid var(--glass-border)'
                     }}>
                         {[
                             { id: 1, label: 'Identity', icon: <User size={20} /> },
@@ -285,18 +310,18 @@ const StudentDashboard = () => {
                                     borderRadius: '20px',
                                     transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
                                     background: step === s.id ? 'rgba(99, 102, 241, 0.1)' : 'transparent',
-                                    color: step >= s.id ? 'white' : 'var(--text-muted)'
+                                    color: step >= s.id ? 'var(--text-main)' : 'var(--text-muted)'
                                 }}
                             >
                                 <div style={{
                                     width: '48px',
                                     height: '48px',
                                     borderRadius: '16px',
-                                    background: step === s.id ? 'var(--primary)' : step > s.id ? 'rgba(16, 185, 129, 0.2)' : 'rgba(255,255,255,0.03)',
+                                    background: step === s.id ? 'var(--primary)' : step > s.id ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-secondary)',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    color: step === s.id ? 'white' : step > s.id ? 'var(--success)' : 'inherit',
+                                    color: step === s.id ? '#ffffff' : step > s.id ? 'var(--success)' : 'inherit',
                                     boxShadow: step === s.id ? '0 0 20px var(--primary-glow)' : 'none',
                                     border: step === s.id ? 'none' : '1px solid var(--glass-border)'
                                 }}>
@@ -324,7 +349,7 @@ const StudentDashboard = () => {
                                     </div>
                                     <div className="input-group">
                                         <label style={{ color: 'var(--text-muted)', fontWeight: '600' }}>Personalized Mailbox</label>
-                                        <input type="text" value={studentData.email} disabled style={{ ...inputStyle, background: 'rgba(15, 23, 42, 0.2)', opacity: 0.7, cursor: 'not-allowed' }} />
+                                        <input type="text" value={studentData.email} disabled style={{ ...inputStyle, background: 'rgba(15, 23, 42, 0.06)', opacity: 0.7, cursor: 'not-allowed' }} />
                                     </div>
                                     <div className="input-group">
                                         <label style={{ fontWeight: '600' }}>Institutional Register ID</label>
@@ -638,7 +663,7 @@ const StudentDashboard = () => {
                                     pointerEvents: step === 1 ? 'none' : 'auto',
                                     padding: '12px 24px',
                                     borderRadius: '14px',
-                                    background: 'rgba(255,255,255,0.03)',
+                                    background: 'var(--bg-secondary)',
                                     marginBottom: 0
                                 }}
                             >
@@ -651,7 +676,7 @@ const StudentDashboard = () => {
                                         Next Matrix <ChevronRight size={20} />
                                     </button>
                                 ) : (
-                                    <button onClick={handleSubmit} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 60px', borderRadius: '16px', width: 'auto', background: studentData.isVerified ? 'rgba(16, 185, 129, 0.2)' : 'linear-gradient(to right, var(--primary), var(--accent))', color: studentData.isVerified ? 'var(--success)' : 'white', cursor: studentData.isVerified ? 'not-allowed' : 'pointer' }} disabled={saving || studentData.isVerified}>
+                                    <button onClick={handleSubmit} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '10px', padding: '16px 60px', borderRadius: '16px', width: 'auto', background: studentData.isVerified ? 'rgba(16, 185, 129, 0.2)' : 'linear-gradient(to right, var(--primary), var(--accent))', color: studentData.isVerified ? 'var(--success)' : '#ffffff', cursor: studentData.isVerified ? 'not-allowed' : 'pointer' }} disabled={saving || studentData.isVerified}>
                                         {saving ? 'Syncing...' : studentData.isVerified ? <><CheckCircle size={20} /> Identity Verified</> : <><Save size={20} /> Consolidate Profile</>}
                                     </button>
                                 )}
@@ -692,7 +717,7 @@ const StudentDashboard = () => {
                         </div>
 
                         <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px', marginTop: '10px' }}>
-                            <p style={{ fontSize: '0.85rem', color: 'rgba(255,255,255,0.8)', lineHeight: '1.6', textAlign: 'center' }}>
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', lineHeight: '1.6', textAlign: 'center' }}>
                                 {riskStatus === 'Not Predicted'
                                     ? "Consolidate your academic matrix and career aspirations to trigger deep-learning dropout analysis."
                                     : "Prediction synthesized using behavioral patterns, financial socio-factors, and real-time academic integrity."}
@@ -712,8 +737,8 @@ const StudentDashboard = () => {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                             {[
                                 { label: 'Academic Approval', status: studentData?.academicVerification || 'Pending', remark: studentData?.academicRemark, icon: <GraduationCap size={18} /> },
-                                ...(studentData?.specialLabParticipation ? [{ label: 'Special Lab Approval', status: studentData?.labVerification || 'Pending', remark: studentData?.labRemark, icon: <Activity size={18} /> }] : []),
-                                { label: 'Placement Team Approval', status: studentData?.placementVerification || 'Pending', remark: studentData?.placementRemark, icon: <Briefcase size={18} /> }
+                                ...(studentData?.specialLabParticipation && studentData?.labVerification !== 'N/A' ? [{ label: 'Special Lab Approval', status: studentData?.labVerification || 'Pending', remark: studentData?.labRemark, icon: <Activity size={18} /> }] : []),
+                                ...(studentData?.isInterestedInNIP && studentData?.placementVerification !== 'N/A' ? [{ label: 'Placement Team Approval', status: studentData?.placementVerification || 'Pending', remark: studentData?.placementRemark, icon: <Briefcase size={18} /> }] : [])
                             ].map((v, i) => (
                                 <div key={i} className="glass-dark" style={{ display: 'flex', flexDirection: 'column', gap: '8px', padding: '16px 20px', borderRadius: '18px' }}>
                                     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -728,7 +753,7 @@ const StudentDashboard = () => {
                                             fontWeight: '800',
                                             textTransform: 'uppercase',
                                             letterSpacing: '0.05em',
-                                            background: v.status === 'Verified' ? 'rgba(16, 185, 129, 0.1)' : v.status === 'Rejected' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(255,255,255,0.03)',
+                                            background: v.status === 'Verified' ? 'rgba(16, 185, 129, 0.1)' : v.status === 'Rejected' ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg-secondary)',
                                             color: getVerificationColor(v.status),
                                             border: `1px solid ${getVerificationColor(v.status)}33`
                                         }}>

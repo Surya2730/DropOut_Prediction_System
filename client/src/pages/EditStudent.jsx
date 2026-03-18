@@ -110,9 +110,9 @@ const EditStudent = () => {
         width: '100%',
         padding: '12px',
         borderRadius: '8px',
-        background: '#1e293b',
-        color: 'white',
-        border: '1px solid rgba(255, 255, 255, 0.1)',
+        background: '#f8fafc',
+        color: 'var(--text-main)',
+        border: '1px solid var(--glass-border)',
         marginTop: '8px'
     };
 

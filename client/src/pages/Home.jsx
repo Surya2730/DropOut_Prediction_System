@@ -159,8 +159,8 @@ const Home = () => {
                                     ))}
                                 </Pie>
                                 <Tooltip
-                                    contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px' }}
-                                    itemStyle={{ color: '#fff' }}
+                                    contentStyle={{ background: '#ffffff', border: '1px solid var(--glass-border)', borderRadius: '8px', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    itemStyle={{ color: 'var(--text-main)' }}
                                 />
                                 <Legend verticalAlign="bottom" height={36} />
                             </PieChart>
@@ -195,8 +195,8 @@ const Home = () => {
                                         `Total: ${value} Students\nHigh Risk: ${props.payload.highRisk}\nLow Risk: ${props.payload.lowRisk}`,
                                         name
                                     ]}
-                                    contentStyle={{ background: '#1e293b', border: '1px solid #475569', borderRadius: '8px', whiteSpace: 'pre-line' }}
-                                    itemStyle={{ color: '#fff' }}
+                                    contentStyle={{ background: '#ffffff', border: '1px solid var(--glass-border)', borderRadius: '8px', whiteSpace: 'pre-line', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }}
+                                    itemStyle={{ color: 'var(--text-main)' }}
                                 />
                                 <Legend verticalAlign="bottom" height={36} />
                             </PieChart>

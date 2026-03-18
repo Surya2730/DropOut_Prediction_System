@@ -64,6 +64,14 @@ const addStudent = async (req, res) => {
             return res.json(updatedStudent);
         }
 
+        // mark optional verifications as N/A if the student never participates
+        if (!studentData.specialLabParticipation) {
+            studentData.labVerification = 'N/A';
+        }
+        if (!studentData.isInterestedInNIP) {
+            studentData.placementVerification = 'N/A';
+        }
+
         student = new Student({
             ...studentData,
             riskStatus: 'Not Predicted'
@@ -183,8 +191,9 @@ const updateStudent = async (req, res) => {
             if (dataChanged && student.isVerified) {
                 console.log('Student data changed, resetting verification status');
                 student.academicVerification = 'Pending';
-                student.labVerification = 'Pending';
-                student.placementVerification = 'Pending';
+                // don't force pending for N/A items
+                student.labVerification = student.specialLabParticipation ? 'Pending' : 'N/A';
+                student.placementVerification = student.isInterestedInNIP ? 'Pending' : 'N/A';
                 student.isVerified = false;
                 student.riskStatus = 'Not Predicted'; // Reset risk status too
             }
@@ -207,6 +216,15 @@ const verifyStudent = async (req, res) => {
         const student = await Student.findById(req.params.id);
 
         if (student) {
+            // ensure non-applicable verifications are treated as N/A so academic-only
+            // records can become fully verified automatically
+            if (!student.specialLabParticipation && student.labVerification === 'Pending') {
+                student.labVerification = 'N/A';
+            }
+            if (student.isNotInterestedInPlacement && student.placementVerification === 'Pending') {
+                student.placementVerification = 'N/A';
+            }
+
             if (type === 'academic') {
                 student.academicVerification = status;
                 student.academicRemark = remark || '';
@@ -218,13 +236,21 @@ const verifyStudent = async (req, res) => {
                 student.placementRemark = remark || '';
             }
 
-            // Check if all are verified
+            // re‑check applicability in case verification status was manually updated elsewhere
             const isAcademicCleared = student.academicVerification === 'Verified';
             const isLabCleared = student.labVerification === 'Verified' || student.labVerification === 'N/A';
             const isPlacementCleared = student.placementVerification === 'Verified' || student.placementVerification === 'N/A';
 
+            console.log(`Verification update for ${student.name}:`, {
+                academic: student.academicVerification,
+                lab: student.labVerification,
+                placement: student.placementVerification,
+                cleared: { academic: isAcademicCleared, lab: isLabCleared, placement: isPlacementCleared }
+            });
+
             if (isAcademicCleared && isLabCleared && isPlacementCleared) {
                 student.isVerified = true;
+                console.log(`${student.name} is now FULLY VERIFIED`);
             } else {
                 student.isVerified = false;
             }
@@ -265,8 +291,8 @@ const updateStudentProfile = async (req, res) => {
             if (dataChanged && student.isVerified) {
                 console.log('Student profile data changed, resetting verification status');
                 student.academicVerification = 'Pending';
-                student.labVerification = 'Pending';
-                student.placementVerification = 'Pending';
+                student.labVerification = student.specialLabParticipation ? 'Pending' : 'N/A';
+                student.placementVerification = student.isInterestedInNIP ? 'Pending' : 'N/A';
                 student.isVerified = false;
                 student.riskStatus = 'Not Predicted'; // Reset risk status too
             }

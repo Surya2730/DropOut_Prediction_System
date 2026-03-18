@@ -67,7 +67,20 @@ router.post('/login', async (req, res) => {
         if (credentials[email] && password === credentials[email].pass) {
             // Update user info if needed
             user.role = credentials[email].role;
-            user.name = credentials[email].name;
+            
+            // Only overwrite name for non-students, OR if name is missing
+            if (user.role === 'Student') {
+                const Student = require('../models/Student');
+                const studentProfile = await Student.findOne({ email });
+                if (studentProfile && studentProfile.name) {
+                    user.name = studentProfile.name;
+                } else if (!user.name) {
+                    user.name = credentials[email].name;
+                }
+            } else {
+                user.name = credentials[email].name;
+            }
+            
             user.password = password;
             await user.save();
 
@@ -81,6 +94,16 @@ router.post('/login', async (req, res) => {
 
         // For regular users (including faculty-created students), check password
         if (user.password === password) {
+            // Ensure student name is up-to-date
+            if (user.role === 'Student') {
+                const Student = require('../models/Student');
+                const studentProfile = await Student.findOne({ email });
+                if (studentProfile && studentProfile.name && studentProfile.name !== user.name) {
+                    user.name = studentProfile.name;
+                    await user.save();
+                }
+            }
+
             return res.json({
                 _id: user._id,
                 name: user.name,

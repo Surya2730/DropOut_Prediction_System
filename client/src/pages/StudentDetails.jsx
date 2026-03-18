@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { Search, Trash2, Edit, User, GraduationCap, AlertTriangle, CheckCircle, BrainCircuit } from 'lucide-react';
+import { Search, Trash2, Edit, User, GraduationCap, AlertTriangle, CheckCircle, BrainCircuit, FileDown } from 'lucide-react';
+import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const StudentDetails = () => {
     const [students, setStudents] = useState([]);
@@ -42,6 +44,80 @@ const StudentDetails = () => {
 
     const handleEdit = (id) => {
         navigate(`/edit-student/${id}`);
+    };
+
+    const handleDownloadPDF = () => {
+        if (!filteredStudents || filteredStudents.length === 0) {
+            alert('No records to export. Please adjust your filters or add data first.');
+            return;
+        }
+
+        try {
+            console.log('Starting PDF generation...');
+            const doc = new jsPDF();
+            console.log('jsPDF created');
+
+            // Add Title
+            doc.setFontSize(20);
+            doc.text(getPageTitle(), 14, 22);
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(getPageDescription(), 14, 30);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 36);
+            console.log('Title added');
+
+            // Prepare Table Data
+            const tableBody = filteredStudents.map(student => [
+                student.name || 'N/A',
+                student.registerNo || 'N/A',
+                student.department || 'N/A',
+                student.attendance != null ? `${student.attendance}%` : 'N/A',
+                student.cgpa != null ? student.cgpa : 'N/A',
+                student.riskStatus || 'Not Analyzed'
+            ]);
+            console.log('Table data prepared:', tableBody);
+
+            // Try autoTable
+            try {
+                autoTable(doc, {
+                    startY: 45,
+                    head: [['Name', 'Register No', 'Department', 'Attendance', 'CGPA', 'Risk Status']],
+                    body: tableBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [99, 102, 241] },
+                });
+                console.log('Table added successfully');
+            } catch (tableError) {
+                console.error('autoTable failed:', tableError);
+                // Fallback: add text instead
+                doc.setFontSize(12);
+                doc.text('Student Records:', 14, 50);
+                let yPos = 60;
+                tableBody.forEach((row, index) => {
+                    doc.text(`${index + 1}. ${row.join(' | ')}`, 14, yPos);
+                    yPos += 10;
+                    if (yPos > 270) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                });
+                console.log('Fallback text added');
+            }
+
+            // Try to save the PDF; if blocked, open in new tab
+            try {
+                doc.save(`${getPageTitle().replace(/\s+/g, '_')}_${new Date().toLocaleDateString()}.pdf`);
+                console.log('PDF saved');
+            } catch (saveError) {
+                console.warn('Direct save failed, opening PDF in new tab:', saveError);
+                const pdfDataUri = doc.output('dataurlstring');
+                const newWindow = window.open();
+                newWindow.document.write(`<iframe src="${pdfDataUri}" style="width:100%; height:100%;" frameborder="0"></iframe>`);
+            }
+        } catch (err) {
+            console.error('PDF export failed:', err);
+            alert(`Unable to generate PDF: ${err.message}. Please try again or contact support.`);
+        }
     };
 
     const filteredStudents = students
@@ -117,28 +193,49 @@ const StudentDetails = () => {
                     </h1>
                     <p style={{ color: 'var(--text-muted)' }}>{getPageDescription()}</p>
                 </div>
-                <div style={{ position: 'relative', width: '300px' }}>
-                    <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
-                    <input
-                        type="text"
-                        placeholder="Search by Name, Reg No, or Dept..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+                    <div style={{ position: 'relative', width: '300px' }}>
+                        <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
+                        <input
+                            type="text"
+                            placeholder="Search by Name, Reg No, or Dept..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{
+                                width: '100%',
+                                padding: '12px 12px 12px 40px',
+                                borderRadius: '10px',
+                                background: '#f8fafc',
+                                border: '1.5px solid var(--glass-border)',
+                                color: 'var(--text-main)'
+                            }}
+                        />
+                    </div>
+                    <button
+                        onClick={handleDownloadPDF}
+                        disabled={filteredStudents.length === 0}
+                        className="btn-primary"
                         style={{
-                            width: '100%',
-                            padding: '12px 12px 12px 40px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '8px',
+                            padding: '12px 20px',
                             borderRadius: '10px',
-                            background: 'rgba(255,255,255,0.05)',
-                            border: '1px solid rgba(255,255,255,0.1)',
-                            color: 'white'
+                            width: 'auto',
+                            boxShadow: 'none',
+                            fontSize: '0.9rem'
                         }}
-                    />
+                        title={filteredStudents.length === 0 ? 'No records available to export' : 'Export current list to PDF'}
+                    >
+                        <FileDown size={18} />
+                        Export PDF
+                    </button>
                 </div>
             </div>
 
             <div className="card glass" style={{ padding: 0, overflow: 'hidden' }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
-                    <thead style={{ background: 'rgba(255,255,255,0.03)' }}>
+                    <thead style={{ background: 'var(--bg-secondary)' }}>
                         <tr>
                             <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Individual Identity</th>
                             <th style={{ padding: '16px 24px', color: 'var(--text-muted)', fontWeight: '600', fontSize: '0.85rem', textTransform: 'uppercase' }}>Academic Context</th>
@@ -152,20 +249,20 @@ const StudentDetails = () => {
                             <tr><td colSpan="5" style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>No student records found.</td></tr>
                         ) : Object.keys(groupedStudents).sort().map(dept => (
                             <React.Fragment key={dept}>
-                                <tr style={{ background: 'rgba(255,255,255,0.02)' }}>
+                                <tr style={{ background: '#ffffff' }}>
                                     <td colSpan="5" style={{ padding: '16px 24px', fontWeight: '700', color: 'var(--primary)', fontSize: '1.1rem', borderTop: '2px solid rgba(255,255,255,0.1)' }}>
                                         {dept}
                                     </td>
                                 </tr>
                                 {Object.keys(groupedStudents[dept]).sort((a, b) => b.localeCompare(a)).map(year => (
                                     <React.Fragment key={year}>
-                                        <tr style={{ background: 'rgba(255,255,255,0.01)' }}>
+                                        <tr style={{ background: 'var(--bg-secondary)' }}>
                                             <td colSpan="5" style={{ padding: '12px 24px 8px 48px', fontWeight: '600', color: 'var(--text)', fontSize: '0.95rem' }}>
                                                 {year}
                                             </td>
                                         </tr>
                                         {groupedStudents[dept][year].map(student => (
-                                            <tr key={student._id} style={{ borderTop: '1px solid rgba(255,255,255,0.05)', transition: 'background 0.2s' }} className="table-row">
+                                            <tr key={student._id} style={{ borderTop: '1px solid var(--glass-border)', transition: 'background 0.2s' }} className="table-row">
                                                 <td style={{ padding: '16px 24px' }}>
                                                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                                         <div style={{
@@ -182,7 +279,7 @@ const StudentDetails = () => {
                                                             {student.name.charAt(0)}
                                                         </div>
                                                         <div>
-                                                            <div style={{ fontWeight: '600', color: 'white' }}>{student.name}</div>
+                                                            <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{student.name}</div>
                                                             <div style={{ fontSize: '0.8rem', color: 'var(--primary)', fontWeight: '500' }}>{student.registerNo}</div>
                                                             <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{student.email}</div>
                                                         </div>
@@ -211,11 +308,11 @@ const StudentDetails = () => {
                                                         fontSize: '0.8rem',
                                                         fontWeight: '700',
                                                         background: student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.1)' :
-                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.1)' : 'rgba(255,255,255,0.05)',
+                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.1)' : 'var(--bg-secondary)',
                                                         color: student.riskStatus === 'High Risk' ? '#f87171' :
                                                             student.riskStatus === 'Low Risk' ? '#4ade80' : 'var(--text-muted)',
                                                         border: `1px solid ${student.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.2)' :
-                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.2)' : 'rgba(255,255,255,0.1)'}`
+                                                            student.riskStatus === 'Low Risk' ? 'rgba(34, 197, 94, 0.2)' : 'var(--glass-border)'}`
                                                     }}>
                                                         {student.riskStatus || 'Not Analyzed'}
                                                     </span>

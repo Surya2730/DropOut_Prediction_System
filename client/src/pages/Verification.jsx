@@ -40,7 +40,10 @@ const Verification = () => {
                 const filtered = res.data.filter(s => {
                     if (vType === 'academic') return s.academicVerification === 'Pending';
                     if (vType === 'lab') return s.labVerification === 'Pending';
-                    if (vType === 'placement') return s.placementVerification === 'Pending';
+                    if (vType === 'placement') {
+                        // Stricter filtering for Placement Coordinator
+                        return s.placementVerification === 'Pending' && s.isInterestedInNIP === true;
+                    }
                     return true;
                 });
                 setStudents(filtered);
@@ -123,10 +126,10 @@ const Verification = () => {
                             style={{
                                 padding: '16px 16px 16px 48px',
                                 width: '100%',
-                                background: 'rgba(15, 23, 42, 0.4)',
-                                border: '1px solid var(--glass-border)',
+                                background: '#f8fafc',
+                                border: '1.5px solid var(--glass-border)',
                                 borderRadius: '16px',
-                                color: 'white',
+                                color: 'var(--text-main)',
                                 outline: 'none'
                             }}
                         />
@@ -158,7 +161,7 @@ const Verification = () => {
                                     }}
                                 >
                                     <div>
-                                        <p style={{ fontWeight: '800', fontSize: '1rem', color: selectedStudent?._id === student._id ? 'white' : 'var(--text-main)' }}>{student.name}</p>
+                                        <p style={{ fontWeight: '800', fontSize: '1rem', color: selectedStudent?._id === student._id ? 'var(--text-main)' : 'var(--text-main)' }}>{student.name}</p>
                                         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '4px', fontWeight: '600' }}>{student.registerNo} • {student.department}</p>
                                     </div>
                                     <div style={{
@@ -169,7 +172,7 @@ const Verification = () => {
                                         display: 'flex',
                                         alignItems: 'center',
                                         justifyContent: 'center',
-                                        color: selectedStudent?._id === student._id ? 'white' : 'var(--text-muted)',
+                                        color: selectedStudent?._id === student._id ? 'var(--text-main)' : 'var(--text-muted)',
                                         transition: 'all 0.3s'
                                     }}>
                                         <ArrowRight size={16} />
@@ -336,11 +339,11 @@ const Verification = () => {
                                 style={{
                                     width: '100%',
                                     minHeight: '120px',
-                                    background: 'rgba(15, 23, 42, 0.4)',
+                                    background: '#f8fafc',
                                     border: '1px solid var(--glass-border)',
                                     borderRadius: '16px',
                                     padding: '20px',
-                                    color: 'white',
+                                    color: 'var(--text-main)',
                                     outline: 'none',
                                     fontSize: '0.95rem',
                                     transition: 'all 0.3s'
