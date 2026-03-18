@@ -95,7 +95,7 @@ const Layout = ({ children }) => {
                         <>
                             <NavLink to="/faculty/verification" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                                 <ClipboardCheck size={20} />
-                                <span>Pending Approval</span>
+                                <span style={{ color: 'var(--text-main)', fontWeight: '600' }}>Pending Approval</span>
                             </NavLink>
                             <NavLink to="/faculty/verified-students" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}>
                                 <History size={20} />
@@ -111,7 +111,7 @@ const Layout = ({ children }) => {
                             <User size={20} />
                         </div>
                         <div style={{ overflow: 'hidden' }}>
-                            <p style={{ fontSize: '0.875rem', fontWeight: '600', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}>{user?.name}</p>
+                            <p style={{ fontSize: '0.875rem', fontWeight: '600', whiteSpace: 'nowrap', textOverflow: 'ellipsis', textTransform: 'uppercase' }}>{user?.name}</p>
                             <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{user?.role}</p>
                         </div>
                     </div>

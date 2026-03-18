@@ -135,7 +135,7 @@ const ManageStudents = () => {
                             style={{
                                 padding: '12px 24px',
                                 background: 'var(--primary)',
-                                color: 'white',
+                                color: '#ffffff',
                                 border: 'none',
                                 borderRadius: '8px',
                                 cursor: loading ? 'not-allowed' : 'pointer',
@@ -176,7 +176,7 @@ const ManageStudents = () => {
                         style={{
                             padding: '12px 24px',
                             background: '#3b82f6',
-                            color: 'white',
+                            color: '#ffffff',
                             border: 'none',
                             borderRadius: '8px',
                             cursor: 'pointer',

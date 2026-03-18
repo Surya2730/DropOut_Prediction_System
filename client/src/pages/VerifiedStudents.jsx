@@ -44,6 +44,11 @@ const VerifiedStudents = () => {
                         vType === 'lab' ? s.labVerification :
                             vType === 'placement' ? s.placementVerification : null;
 
+                // Stricter filtering for Placement Coordinator
+                if (vType === 'placement' && s.isInterestedInNIP === false) {
+                    return false;
+                }
+
                 return currentStatus !== 'Pending' && currentStatus !== 'N/A' && currentStatus !== null;
             });
             setStudents(filtered);
@@ -179,10 +184,10 @@ const VerifiedStudents = () => {
                             style={{
                                 padding: '14px 14px 14px 48px',
                                 width: '100%',
-                                background: 'rgba(15, 23, 42, 0.4)',
-                                border: '1px solid var(--glass-border)',
+                                background: '#f8fafc',
+                                border: '1.5px solid var(--glass-border)',
                                 borderRadius: '14px',
-                                color: 'white',
+                                color: 'var(--text-main)',
                                 outline: 'none'
                             }}
                         />
@@ -205,7 +210,7 @@ const VerifiedStudents = () => {
                             <tr>
                                 <th style={{ padding: '24px' }}>STUDENT IDENTITY</th>
                                 <th>DEPARTMENT</th>
-                                <th>ACADEMIC CGPA</th>
+                                {user?.role !== 'PlacementCoordinator' && <th>ACADEMIC CGPA</th>}
                                 <th>CURRENT STATUS</th>
                                 <th style={{ textAlign: 'center' }}>ACTIONS</th>
                             </tr>
@@ -249,7 +254,7 @@ const VerifiedStudents = () => {
                                                             </div>
                                                         </td>
                                                         <td><span style={{ fontWeight: '700', fontSize: '0.85rem' }}>{student.department}</span></td>
-                                                        <td style={{ fontWeight: '800', color: 'var(--primary)' }}>{student.cgpa}</td>
+                                                        {user?.role !== 'PlacementCoordinator' && <td style={{ fontWeight: '800', color: 'var(--primary)' }}>{student.cgpa}</td>}
                                                         <td>
                                                             <div style={{
                                                                 display: 'inline-flex',
@@ -338,20 +343,22 @@ const VerifiedStudents = () => {
                                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>DEPARTMENT</p>
                                 <p style={{ fontWeight: '800' }}>{selectedStudent.department}</p>
                             </div>
-                            {vType === 'lab' && (
-                                <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
-                                    <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>ACADEMIC YEAR</p>
-                                    <p style={{ fontWeight: '800' }}>{selectedStudent.year || '1st Year'}</p>
-                                </div>
+                            {user?.role !== 'PlacementCoordinator' && (
+                                <>
+                                    <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>ACADEMIC YEAR</p>
+                                        <p style={{ fontWeight: '800' }}>{selectedStudent.year || '1st Year'}</p>
+                                    </div>
+                                    <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>ATTENDANCE</p>
+                                        <p style={{ fontWeight: '800' }}>{selectedStudent.attendance}%</p>
+                                    </div>
+                                    <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
+                                        <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>CGPA</p>
+                                        <p style={{ fontWeight: '800' }}>{selectedStudent.cgpa}</p>
+                                    </div>
+                                </>
                             )}
-                            <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>ATTENDANCE</p>
-                                <p style={{ fontWeight: '800' }}>{selectedStudent.attendance}%</p>
-                            </div>
-                            <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
-                                <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>CGPA</p>
-                                <p style={{ fontWeight: '800' }}>{selectedStudent.cgpa}</p>
-                            </div>
                         </div>
 
                         {/* Remark Section */}
@@ -364,11 +371,11 @@ const VerifiedStudents = () => {
                                 style={{
                                     width: '100%',
                                     minHeight: '100px',
-                                    background: 'rgba(15, 23, 42, 0.4)',
+                                    background: '#f8fafc',
                                     border: '1px solid var(--glass-border)',
                                     borderRadius: '16px',
                                     padding: '16px',
-                                    color: 'white',
+                                    color: 'var(--text-main)',
                                     outline: 'none',
                                     fontSize: '0.9rem'
                                 }}

@@ -143,10 +143,10 @@ const Predict = () => {
                             style={{
                                 width: '100%',
                                 padding: '12px',
-                                background: 'rgba(15, 23, 42, 0.6)',
-                                border: '1px solid var(--glass-border)',
+                                background: '#f8fafc',
+                                border: '1.5px solid var(--glass-border)',
                                 borderRadius: '12px',
-                                color: 'white',
+                                color: 'var(--text-main)',
                                 appearance: 'none'
                             }}
                             value={selectedId}
@@ -203,7 +203,7 @@ const Predict = () => {
                                 </span>
                             </div>
 
-                            <div className="form-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: 'rgba(255, 255, 255, 0.03)', padding: '20px', borderRadius: '12px' }}>
+                            <div className="form-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px' }}>
                                 <div>
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>CGPA</p>
                                     <p style={{ fontSize: '1.25rem', fontWeight: '600' }}>{result.cgpa}</p>

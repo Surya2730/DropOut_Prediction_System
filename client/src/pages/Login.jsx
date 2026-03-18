@@ -145,7 +145,7 @@ const Login = () => {
                                 onClick={() => setFormData({ email: cred.email, password: cred.pass })}
                                 style={{
                                     padding: '12px 16px',
-                                    background: 'rgba(15,23,42,0.4)',
+                                    background: '#f8fafc',
                                     border: '1px solid var(--glass-border)',
                                     borderRadius: '12px',
                                     cursor: 'pointer',
@@ -154,14 +154,14 @@ const Login = () => {
                                     justifyContent: 'space-between',
                                     alignItems: 'center'
                                 }}
-                                onMouseOver={e => { e.currentTarget.style.borderColor = cred.color; e.currentTarget.style.background = 'rgba(15,23,42,0.8)'; }}
-                                onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.background = 'rgba(15,23,42,0.4)'; }}
+                                onMouseOver={e => { e.currentTarget.style.borderColor = cred.color; e.currentTarget.style.background = 'rgba(99, 102, 241, 0.08)'; }}
+                                onMouseOut={e => { e.currentTarget.style.borderColor = 'var(--glass-border)'; e.currentTarget.style.background = '#f8fafc'; }}
                             >
                                 <div>
                                     <div style={{ fontSize: '0.75rem', fontWeight: '800', color: cred.color, textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.05em' }}>{cred.role}</div>
                                     <div style={{ fontSize: '0.85rem', fontFamily: 'monospace', color: 'var(--text-main)' }}>{cred.email}</div>
                                 </div>
-                                <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'rgba(255,255,255,0.05)', padding: '4px 8px', borderRadius: '6px' }}>
+                                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', background: 'var(--bg-secondary)', padding: '4px 8px', borderRadius: '6px' }}>
                                     Auto-fill
                                 </div>
                             </div>
