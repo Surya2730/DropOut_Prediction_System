@@ -1,6 +1,5 @@
 const axios = require('axios');
 const Student = require('../models/Student');
-
 // @desc    Predict dropout risk
 // @route   POST /api/predict
 // @access  Public
@@ -127,7 +126,8 @@ const predictDropout = async (req, res) => {
 
         try {
             console.log('Attempting ML service prediction...');
-            const response = await axios.post('http://localhost:5001/predict', mlData, {
+            const ML_URL = process.env.ML_SERVICE_URL || 'http://localhost:5001';
+            const response = await axios.post(`${ML_URL}/predict`, mlData, {
                 timeout: 10000 // 10 second timeout
             });
             const prediction = response.data.dropout_risk;
