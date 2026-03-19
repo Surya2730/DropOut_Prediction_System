@@ -4,20 +4,22 @@ import joblib
 import numpy as np
 import os
 
-port = int(os.environ.get("PORT", 10000))
-
-app.run(host="0.0.0.0", port=port)
+# ✅ Step 1: Create app FIRST
 app = Flask(__name__)
-CORS(app) # Enable CORS for all routes
+CORS(app)
 
-# Load trained model
+# ✅ Step 2: Load model
 model = joblib.load("robust_dropout_model.pkl")
+
+# ✅ Step 3: Routes
+@app.route("/")
+def home():
+    return "ML Service Running 🚀"
 
 @app.route("/predict", methods=["POST"])
 def predict():
     data = request.json
 
-    # Ensure all data values are converted to float or int for processing
     try:
         features = np.array([[
             float(data.get("semesters_completed", 0)),
@@ -61,5 +63,7 @@ def predict():
         "message": "High Risk" if prediction == 1 else "Low Risk"
     })
 
+# ✅ Step 4: Run app (Render compatible)
 if __name__ == "__main__":
-    app.run(port=5001)
+    port = int(os.environ.get("PORT", 10000))
+    app.run(host="0.0.0.0", port=port)
