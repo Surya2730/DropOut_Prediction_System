@@ -19,7 +19,7 @@ const Login = () => {
             const decoded = jwtDecode(credentialResponse.credential);
             const { email, name, sub: googleId } = decoded;
 
-            const res = await axios.post('http://localhost:5000/api/auth/google', {
+            const res = axios.post(`${API}/api/auth/google`, {
                 email,
                 name,
                 googleId
@@ -37,7 +37,7 @@ const Login = () => {
     const handleTraditionalLogin = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post('http://localhost:5000/api/auth/login', formData);
+            const res = axios.post(`${API}/api/auth/login`, formData);
             login(res.data);
             setFormData({ email: '', password: '' }); // Clear form
             navigate('/');
