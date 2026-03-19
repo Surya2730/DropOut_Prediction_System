@@ -5,7 +5,8 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
 import { LogIn, Mail, Lock } from 'lucide-react';
-
+const API = import.meta.env.VITE_API_BASE_URL;
+console.log("API URL:", API);
 const Login = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState('');
