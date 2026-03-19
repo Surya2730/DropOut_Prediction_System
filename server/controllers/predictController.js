@@ -112,6 +112,7 @@ const predictDropout = async (req, res) => {
         // Financial Concerns
         if (annualIncome < 50000) riskScore += 1; // Very low income
         if (hasUnpaidFees) riskScore += 2;        // Unpaid fees
+        if (isPWD) riskScore += 1;                // PWD status
 
         // Protective Factors (Reduce Risk)
         if (specialLabParticipation) riskScore -= 2;   // Lab participation

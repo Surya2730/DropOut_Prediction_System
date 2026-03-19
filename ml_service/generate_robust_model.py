@@ -108,6 +108,10 @@ def generate_robust_data(n_samples=5000):
         if X[i, 13] < 50000: risk_score += 1   # Very low income
         if X[i, 14] == 1: risk_score += 1      # PWD status
         
+        # Placement Concerns
+        if X[i, 24] == 0: risk_score += 2      # Not interested in placement
+        if X[i, 22] == 0: risk_score += 1      # No placement training
+        
         # Protective Factors (Negative points)
         if X[i, 19] == 1: risk_score -= 2      # Lab participation
         if X[i, 25] == 1: risk_score -= 2      # Internship
