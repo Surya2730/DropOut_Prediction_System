@@ -22,7 +22,7 @@ const StudentDetails = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/students');
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students`);
             setStudents(res.data);
             setLoading(false);
         } catch (err) {
@@ -34,7 +34,7 @@ const StudentDetails = () => {
     const handleDelete = async (id) => {
         if (window.confirm('Are you sure you want to delete this student record?')) {
             try {
-                await axios.delete(`http://localhost:5000/api/students/${id}`);
+                await axios.delete(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${id}`);
                 setStudents(students.filter(s => s._id !== id));
             } catch (err) {
                 alert('Error deleting student');

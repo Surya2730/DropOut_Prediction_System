@@ -82,7 +82,7 @@ const StudentDashboard = () => {
         }
         const fetchProfile = async () => {
             try {
-                const allRes = await axios.get('http://localhost:5000/api/students');
+                const allRes = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students`);
                 if (allRes.data && Array.isArray(allRes.data)) {
                     const myProfile = allRes.data.find(s => s.email === user.email);
                     if (myProfile) {
@@ -127,11 +127,11 @@ const StudentDashboard = () => {
             if (file) {
                 const formData = new FormData();
                 formData.append('certificate', file);
-                const uploadRes = await axios.post('http://localhost:5000/api/students/upload-certificate', formData);
+                const uploadRes = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/upload-certificate`, formData);
                 certificatePath = uploadRes.data.filePath;
             }
 
-            const res = await axios.patch('http://localhost:5000/api/students/profile', {
+            const res = await axios.patch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/profile`, {
                 ...studentData,
                 incomeCertificate: certificatePath,
                 academicVerification: studentData.academicVerification === 'Rejected' ? 'Pending' : (studentData.academicVerification || 'Pending'),

@@ -19,7 +19,7 @@ const AddedStudents = () => {
 
     const fetchStudents = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/students?role=${user?.role || 'Faculty'}`);
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=${user?.role || 'Faculty'}`);
             setStudents(res.data);
         } catch (err) {
             console.error('Error fetching students', err);
@@ -37,7 +37,7 @@ const AddedStudents = () => {
         e.preventDefault();
         try {
             // Update student data
-            await axios.put(`http://localhost:5000/api/students/${editingStudent._id}`, {
+            await axios.put(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${editingStudent._id}`, {
                 ...editingStudent,
                 name: editForm.name,
                 email: editForm.email
@@ -45,7 +45,7 @@ const AddedStudents = () => {
 
             // Update user data if name or email changed
             if (editForm.name !== editingStudent.name || editForm.email !== editingStudent.email) {
-                await axios.put(`http://localhost:5000/api/auth/update-user/${editingStudent._id}`, {
+                await axios.put(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/auth/update-user/${editingStudent._id}`, {
                     name: editForm.name,
                     email: editForm.email
                 });
@@ -68,7 +68,7 @@ const AddedStudents = () => {
         if (window.confirm('Are you sure you want to delete this student? This will remove their account and they will no longer be able to login.')) {
             try {
                 // Delete student (and linked user) from backend
-                await axios.delete(`http://localhost:5000/api/students/${student._id}`);
+                await axios.delete(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${student._id}`);
 
                 fetchStudents(); // Refresh the list
             } catch (err) {
@@ -91,7 +91,7 @@ const AddedStudents = () => {
     const handleMigrateStudents = async () => {
         if (window.confirm('This will create student records for any existing student users who don\'t have them. Continue?')) {
             try {
-                const response = await axios.post('http://localhost:5000/api/auth/migrate-students');
+                const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/auth/migrate-students`);
                 alert(response.data.message);
                 fetchStudents(); // Refresh the list
             } catch (err) {

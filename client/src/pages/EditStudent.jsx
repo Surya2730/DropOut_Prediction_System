@@ -60,7 +60,7 @@ const EditStudent = () => {
 
     const fetchStudent = async () => {
         try {
-            const res = await axios.get(`http://localhost:5000/api/students/${id}`);
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${id}`);
             const data = res.data;
             setFormData({
                 ...data,
@@ -91,7 +91,7 @@ const EditStudent = () => {
                 riskStatus: hasChanged ? 'Not Predicted' : formData.riskStatus
             };
 
-            const res = await axios.put(`http://localhost:5000/api/students/${id}`, studentData);
+            const res = await axios.put(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${id}`, studentData);
             setSavedStudentId(res.data._id);
             setMessage('Student Record Updated Successfully!');
             setType('success');

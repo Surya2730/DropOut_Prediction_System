@@ -36,7 +36,7 @@ const Verification = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const res = await axios.get(`http://localhost:5000/api/students?role=${user?.role || 'Student'}`);
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=${user?.role || 'Student'}`);
                 const filtered = res.data.filter(s => {
                     if (vType === 'academic') return s.academicVerification === 'Pending';
                     if (vType === 'lab') return s.labVerification === 'Pending';
@@ -63,7 +63,7 @@ const Verification = () => {
         }
 
         try {
-            await axios.patch(`http://localhost:5000/api/students/${id}/verify`, {
+            await axios.patch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${id}/verify`, {
                 type: vType,
                 status: status,
                 remark: remark
@@ -260,7 +260,7 @@ const Verification = () => {
                                         </div>
                                         {selectedStudent.incomeCertificate ? (
                                             <a
-                                                href={`http://localhost:5000${selectedStudent.incomeCertificate}`}
+                                                href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${selectedStudent.incomeCertificate}`}
                                                 target="_blank"
                                                 rel="noopener noreferrer"
                                                 style={{

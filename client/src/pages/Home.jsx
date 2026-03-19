@@ -29,7 +29,7 @@ const Home = () => {
         const fetchStudents = async () => {
             try {
                 // Return all students for faculty to compute overall stats
-                const res = await axios.get(`http://localhost:5000/api/students`);
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students`);
                 setStudents(res.data);
             } catch (err) {
                 console.error('Error fetching students', err);

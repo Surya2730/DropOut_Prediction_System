@@ -36,7 +36,7 @@ const VerifiedStudents = () => {
     const fetchVerifiedStudents = async () => {
         try {
             setLoading(true);
-            const res = await axios.get(`http://localhost:5000/api/students?role=${user?.role || 'Student'}`);
+            const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=${user?.role || 'Student'}`);
             // Filter students who are ALREADY verified or rejected by this coordinator
             const filtered = res.data.filter(s => {
                 const currentStatus =
@@ -65,7 +65,7 @@ const VerifiedStudents = () => {
 
     const handleReverify = async (id, status) => {
         try {
-            await axios.patch(`http://localhost:5000/api/students/${id}/verify`, {
+            await axios.patch(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students/${id}/verify`, {
                 type: vType,
                 status: status,
                 remark: remark
@@ -384,7 +384,7 @@ const VerifiedStudents = () => {
 
                         <div style={{ display: 'flex', gap: '16px' }}>
                             {selectedStudent.incomeCertificate && (
-                                <a href={`http://localhost:5000${selectedStudent.incomeCertificate}`} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', textDecoration: 'none' }}>
+                                <a href={`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}${selectedStudent.incomeCertificate}`} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', textDecoration: 'none' }}>
                                     <FileText size={18} /> View Certificate
                                 </a>
                             )}

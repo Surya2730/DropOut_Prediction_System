@@ -14,7 +14,7 @@ const Predict = () => {
     useEffect(() => {
         const fetchStudents = async () => {
             try {
-                const res = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
+                const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=Faculty&requireVerified=true`);
                 const sortedStudents = res.data.sort((a, b) => {
                     const deptCompare = a.department.localeCompare(b.department);
                     if (deptCompare !== 0) return deptCompare;
@@ -45,7 +45,7 @@ const Predict = () => {
         setError('');
         setResult(null);
         try {
-            const res = await axios.post('http://localhost:5000/api/predict', student);
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/predict`, student);
 
             // Check if the response indicates the student is not verified
             if (res.data.riskStatus === 'Not Verified') {
@@ -61,7 +61,7 @@ const Predict = () => {
                 threshold: res.data.threshold
             });
             // Refresh student list
-            const updatedList = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
+            const updatedList = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=Faculty&requireVerified=true`);
             const sortedStudents = updatedList.data.sort((a, b) => {
                 const deptCompare = a.department.localeCompare(b.department);
                 if (deptCompare !== 0) return deptCompare;
@@ -90,7 +90,7 @@ const Predict = () => {
 
         try {
             const student = students.find(s => s._id === selectedId);
-            const res = await axios.post('http://localhost:5000/api/predict', student);
+            const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/predict`, student);
 
             // Check if the response indicates the student is not verified
             if (res.data.riskStatus === 'Not Verified') {
@@ -106,7 +106,7 @@ const Predict = () => {
                 threshold: res.data.threshold
             });
             // Refresh student list to update riskStatus
-            const updatedList = await axios.get('http://localhost:5000/api/students?role=Faculty&requireVerified=true');
+            const updatedList = await axios.get(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/students?role=Faculty&requireVerified=true`);
             const sortedStudents = updatedList.data.sort((a, b) => {
                 const deptCompare = a.department.localeCompare(b.department);
                 if (deptCompare !== 0) return deptCompare;

@@ -21,7 +21,7 @@ const ManageStudents = () => {
         setMessage('');
 
         try {
-            const response = await axios.post('http://localhost:5000/api/auth/create-student', formData);
+            const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'}/api/auth/create-student`, formData);
             setMessage('Student account created successfully!');
             setFormData({ name: '', email: '', password: '' });
         } catch (error) {
