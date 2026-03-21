@@ -6,27 +6,59 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
 
+    // 🔹 Load user from localStorage safely
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            setUser(JSON.parse(storedUser));
+
+        try {
+            if (storedUser && storedUser !== "undefined") {
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+            }
+        } catch (error) {
+            console.error("Invalid JSON in localStorage:", error);
+            localStorage.removeItem('user'); // cleanup bad data
         }
+
         setLoading(false);
     }, []);
 
+    // 🔹 Login function
     const login = (userData) => {
-        setUser(userData);
-        localStorage.setItem('user', JSON.stringify(userData));
+        if (!userData) {
+            console.warn("Invalid userData during login");
+            return;
+        }
+
+        try {
+            setUser(userData);
+            localStorage.setItem('user', JSON.stringify(userData));
+        } catch (error) {
+            console.error("Error saving user:", error);
+        }
     };
 
+    // 🔹 Update user safely
     const updateUser = (updatedFields) => {
-        setUser(prev => {
+        setUser((prev) => {
+            if (!prev) {
+                console.warn("No user to update");
+                return null;
+            }
+
             const updated = { ...prev, ...updatedFields };
-            localStorage.setItem('user', JSON.stringify(updated));
+
+            try {
+                localStorage.setItem('user', JSON.stringify(updated));
+            } catch (error) {
+                console.error("Error updating user:", error);
+            }
+
             return updated;
         });
     };
 
+    // 🔹 Logout function
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');
@@ -39,4 +71,13 @@ export const AuthProvider = ({ children }) => {
     );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// 🔹 Custom hook
+export const useAuth = () => {
+    const context = useContext(AuthContext);
+
+    if (!context) {
+        throw new Error("useAuth must be used within AuthProvider");
+    }
+
+    return context;
+};
