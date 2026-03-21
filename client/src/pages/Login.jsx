@@ -15,7 +15,6 @@ const Login = () => {
     const { login } = useAuth();
     const navigate = useNavigate();
 
-    // ✅ GOOGLE LOGIN
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
             const decoded = jwtDecode(credentialResponse.credential);
@@ -27,8 +26,6 @@ const Login = () => {
                 googleId
             });
 
-            console.log("GOOGLE RESPONSE:", res.data);
-
             if (res.data) {
                 login(res.data);
                 setFormData({ email: '', password: '' });
@@ -36,21 +33,17 @@ const Login = () => {
             } else {
                 setError("Invalid Google login response");
             }
-
         } catch (err) {
-            console.error("Google Login Error:", err);
+            console.error(err);
             setError('Google Login failed');
         }
     };
 
-    // ✅ NORMAL LOGIN
     const handleTraditionalLogin = async (e) => {
         e.preventDefault();
 
         try {
             const res = await axios.post(`${API}/api/auth/login`, formData);
-
-            console.log("LOGIN RESPONSE:", res.data);
 
             if (res.data) {
                 login(res.data);
@@ -59,9 +52,7 @@ const Login = () => {
             } else {
                 setError("Invalid response from server");
             }
-
         } catch (err) {
-            console.error("Login Error:", err);
             setError(err.response?.data?.message || 'Login failed');
         }
     };
@@ -139,7 +130,6 @@ const Login = () => {
 
                     <div className="divider">OR</div>
 
-                    {/* ✅ GOOGLE LOGIN (FIXED) */}
                     <div style={{ display: 'flex', justifyContent: 'center' }}>
                         <GoogleLogin
                             onSuccess={handleGoogleSuccess}
@@ -150,20 +140,47 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* DEMO PANEL */}
-                <div style={{ padding: '20px' }}>
-                    <h3>Demo Credentials</h3>
+                {/* ✅ UPDATED DEMO PANEL */}
+                <div className="glass animate-fade" style={{
+                    flex: '1',
+                    minWidth: '320px',
+                    maxWidth: '400px',
+                    padding: '32px',
+                    borderRadius: '24px'
+                }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
+                        <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '10px' }}>
+                            <LogIn size={20} color="var(--primary)" />
+                        </div>
+                        <h3 style={{ fontSize: '1.25rem', fontWeight: '700' }}>
+                            Demo Credentials
+                        </h3>
+                    </div>
+
+                    <p style={{ fontSize: '0.85rem', marginBottom: '20px' }}>
+                        Click to auto-fill login details
+                    </p>
 
                     {[
-                        { email: 'student1@gmail.com', password: 'student1123' },
-                        { email: 'faculty@gmail.com', password: 'Faculty123' }
+                        { role: 'Student', email: 'student1@gmail.com', pass: 'student1123', color: '#22c55e' },
+                        { role: 'Faculty', email: 'faculty@gmail.com', pass: 'Faculty123', color: '#3b82f6' },
+                        { role: 'Academic Coordinator', email: 'academic@coordinator.com', pass: 'Academic123', color: '#f59e0b' },
+                        { role: 'Lab Coordinator', email: 'lab@coordinator.com', pass: 'Lab123', color: '#a855f7' },
+                        { role: 'Placement Coordinator', email: 'placement@coordinator.com', pass: 'Placement123', color: '#6366f1' }
                     ].map((cred, i) => (
                         <div
                             key={i}
-                            onClick={() => setFormData(cred)}
-                            style={{ cursor: 'pointer', margin: '10px 0' }}
+                            onClick={() => setFormData({ email: cred.email, password: cred.pass })}
+                            style={{
+                                padding: '14px',
+                                marginBottom: '10px',
+                                borderRadius: '12px',
+                                border: '1px solid #e5e7eb',
+                                cursor: 'pointer'
+                            }}
                         >
-                            {cred.email}
+                            <strong style={{ color: cred.color }}>{cred.role}</strong>
+                            <div style={{ fontSize: '0.85rem' }}>{cred.email}</div>
                         </div>
                     ))}
                 </div>
