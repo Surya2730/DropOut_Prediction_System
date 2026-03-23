@@ -30,6 +30,11 @@ app.use('/api/auth', authRoutes);
 // Swagger API documentation
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
+// Small health endpoint to confirm the latest backend code is deployed
+app.get('/api-docs-test', (req, res) => {
+    res.json({ ok: true, docsPath: '/api-docs' });
+});
+
 app.get('/', (req, res) => {
     res.send('API is running...');
 });
