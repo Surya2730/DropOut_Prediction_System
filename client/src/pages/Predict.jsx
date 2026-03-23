@@ -11,6 +11,14 @@ const Predict = () => {
     const [error, setError] = useState('');
     const location = useLocation();
 
+    // Capitalize only words that are fully lowercase (e.g., "john" -> "John")
+    // so we don't change names that already have correct casing.
+    const formatStudentName = (name) => {
+        if (!name) return '';
+        // Display-only formatting: show the full student name in CAPS.
+        return String(name).trim().toUpperCase();
+    };
+
     useEffect(() => {
         const fetchStudents = async () => {
             try {
@@ -154,7 +162,9 @@ const Predict = () => {
                         >
                             <option value="">Choose a student...</option>
                             {students.map(s => (
-                                <option key={s._id} value={s._id}>{s.name} ({s.registerNo})</option>
+                                <option key={s._id} value={s._id}>
+                                    {formatStudentName(s.name)} ({s.registerNo})
+                                </option>
                             ))}
                         </select>
                     </div>
@@ -193,7 +203,7 @@ const Predict = () => {
                             )}
                         </div>
                         <div style={{ flex: 1 }}>
-                            <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>{result.name}</h2>
+                            <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>{formatStudentName(result.name)}</h2>
                             <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{result.registerNo}</p>
 
                             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
