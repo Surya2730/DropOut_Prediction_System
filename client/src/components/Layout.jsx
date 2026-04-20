@@ -36,6 +36,10 @@ const Layout = ({ children }) => {
         } else {
             document.body.style.overflow = 'unset';
         }
+        
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
     }, [isSidebarOpen]);
 
     const handleLogout = () => {
