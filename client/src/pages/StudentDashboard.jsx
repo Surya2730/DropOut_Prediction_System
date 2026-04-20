@@ -206,23 +206,31 @@ const StudentDashboard = () => {
     return (
         <div className="animate-fade" style={{ maxWidth: '1300px', margin: '0 auto', padding: '10px' }}>
             {/* Elegant Header Section */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '48px', position: 'relative' }}>
-                <div style={{ zIndex: 1 }}>
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'flex-start', 
+                marginBottom: '48px', 
+                position: 'relative',
+                flexWrap: 'wrap',
+                gap: '24px'
+            }}>
+                <div style={{ zIndex: 1, flex: '1 1 300px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                         <div style={{ padding: '8px', borderRadius: '10px', background: 'rgba(99, 102, 241, 0.1)', border: '1px solid rgba(99, 102, 241, 0.2)' }}>
                             <ShieldCheck size={24} color="var(--primary)" />
                         </div>
-                        <span style={{ fontSize: '0.9rem', fontWeight: '700', color: 'var(--primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Secure Workspace</span>
+                        <span style={{ fontSize: '0.85rem', fontWeight: '700', color: 'var(--primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Secure Workspace</span>
                     </div>
-                    <h1 className="text-gradient" style={{ fontSize: '3.5rem', fontWeight: '900', letterSpacing: '-0.04em', lineHeight: '1' }}>
+                    <h1 className="text-gradient" style={{ fontSize: 'clamp(2.5rem, 8vw, 3.5rem)', fontWeight: '950', letterSpacing: '-0.04em', lineHeight: '1.1' }}>
                         Student Central
                     </h1>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.25rem', marginTop: '12px', maxWidth: '500px' }}>
+                    <p style={{ color: 'var(--text-muted)', fontSize: 'clamp(1rem, 3vw, 1.25rem)', marginTop: '12px', maxWidth: '500px' }}>
                         Welcome {user?.name || 'Student'}. Year: {studentData?.year || '1st Year'}
                     </p>
                 </div>
 
-                <div className="glass" style={{ padding: '24px', borderRadius: '24px', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '12px', minWidth: '240px' }}>
+                <div className="glass" style={{ padding: '24px', borderRadius: '24px', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '12px', minWidth: 'min(100%, 280px)', flex: '0 1 auto' }}>
                     <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '10px' }}>
                         {/* Always show Academic */}
                         <div title={`Academic: ${studentData?.academicVerification}`} style={{
@@ -276,7 +284,12 @@ const StudentDashboard = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 380px', gap: '40px', alignItems: 'start' }}>
+            <div className="dashboard-main-grid" style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 350px), 1fr))', 
+                gap: '40px', 
+                alignItems: 'start' 
+            }}>
 
                 {/* Main Interaction Area */}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: '40px' }}>
@@ -285,6 +298,7 @@ const StudentDashboard = () => {
                     <div className="glass" style={{
                         padding: '12px',
                         display: 'flex',
+                        flexWrap: 'wrap',
                         justifyContent: 'space-between',
                         borderRadius: '24px',
                         background: 'rgba(99, 102, 241, 0.05)',
@@ -300,8 +314,8 @@ const StudentDashboard = () => {
                                 key={s.id}
                                 onClick={() => setStep(s.id)}
                                 style={{
-                                    flex: 1,
-                                    padding: '16px',
+                                    flex: '1 1 120px',
+                                    padding: '16px 8px',
                                     display: 'flex',
                                     flexDirection: 'column',
                                     alignItems: 'center',
@@ -314,8 +328,8 @@ const StudentDashboard = () => {
                                 }}
                             >
                                 <div style={{
-                                    width: '48px',
-                                    height: '48px',
+                                    width: 'clamp(32px, 10vw, 48px)',
+                                    height: 'clamp(32px, 10vw, 48px)',
                                     borderRadius: '16px',
                                     background: step === s.id ? 'var(--primary)' : step > s.id ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-secondary)',
                                     display: 'flex',
@@ -325,23 +339,23 @@ const StudentDashboard = () => {
                                     boxShadow: step === s.id ? '0 0 20px var(--primary-glow)' : 'none',
                                     border: step === s.id ? 'none' : '1px solid var(--glass-border)'
                                 }}>
-                                    {step > s.id ? <CheckCircle size={24} /> : s.icon}
+                                    {step > s.id ? <CheckCircle size={20} /> : s.icon}
                                 </div>
-                                <span style={{ fontWeight: '700', fontSize: '0.85rem', letterSpacing: '0.05em', textTransform: 'uppercase' }}>{s.label}</span>
+                                <span style={{ fontWeight: '700', fontSize: '0.75rem', letterSpacing: '0.05em', textTransform: 'uppercase', textAlign: 'center' }}>{s.label}</span>
                                 {step === s.id && <div style={{ width: '4px', height: '4px', borderRadius: '50%', background: 'var(--primary)', marginTop: '4px' }}></div>}
                             </div>
                         ))}
                     </div>
 
                     {/* Content Component with Premium Feel */}
-                    <div className="glass" style={{ padding: '54px', borderRadius: '32px', position: 'relative', overflow: 'hidden' }}>
+                    <div className="glass" style={{ padding: 'clamp(24px, 5vw, 54px)', borderRadius: '32px', position: 'relative', overflow: 'hidden' }}>
                         {/* Decorative Background Element */}
                         <div style={{ position: 'absolute', top: '-100px', right: '-100px', width: '300px', height: '300px', background: 'radial-gradient(circle, var(--primary-glow) 0%, transparent 70%)', opacity: 0.1, pointerEvents: 'none' }}></div>
 
                         {step === 1 && (
                             <div className="animate-fade">
                                 <h3 style={{ fontSize: '2rem', marginBottom: '40px', fontWeight: '800' }}>Identity Verification</h3>
-                                <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
+                                <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '32px' }}>
                                     <div className="input-group">
                                         <label style={{ fontWeight: '600' }}>Full Name</label>
                                         <input type="text" name="name" value={studentData.name || ''} onChange={handleChange} required placeholder="Enter your full name..."
@@ -400,7 +414,7 @@ const StudentDashboard = () => {
                                 {parseInt(studentData.completedSemesters) > 0 && (
                                     <div style={{ marginBottom: '32px' }}>
                                         <label style={{ fontWeight: '700', fontSize: '1rem', display: 'block', marginBottom: '16px' }}>Semester Marks (out of 100)</label>
-                                        <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                                        <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '20px' }}>
                                             {Array.from({ length: parseInt(studentData.completedSemesters) }, (_, i) => {
                                                 const semNum = i + 1;
                                                 const fieldName = semNum <= 5 ? `sem${semNum}Marks` : `sem${semNum}`;
@@ -425,7 +439,7 @@ const StudentDashboard = () => {
                                 )}
 
                                 {/* 3. Core academic metrics */}
-                                <div className="form-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '32px' }}>
+                                <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '32px', marginBottom: '32px' }}>
                                     <div className="input-group">
                                         <label style={{ fontWeight: '600' }}>Attendance (%)</label>
                                         <input type="number" name="attendance" value={studentData.attendance} onChange={handleChange} required placeholder="85" disabled={isAcademicLocked} style={getLockedStyle(isAcademicLocked)} />
@@ -492,7 +506,7 @@ const StudentDashboard = () => {
 
                                         {/* Conditional placement stats */}
                                         {studentData.isInterestedInNIP && (
-                                            <div className="animate-fade" style={{ marginTop: '28px', display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                                            <div className="animate-fade" style={{ marginTop: '28px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 150px), 1fr))', gap: '20px' }}>
                                                 <div>
                                                     <label style={{ fontWeight: '600', fontSize: '0.9rem', display: 'block', marginBottom: '6px' }}>Placement Attendance (%)</label>
                                                     <input
@@ -583,7 +597,7 @@ const StudentDashboard = () => {
                                     <input type="number" name="annualIncome" value={studentData.annualIncome} onChange={handleChange} placeholder="5,00,000" disabled={isAcademicLocked} style={getLockedStyle(isAcademicLocked)} />
                                 </div>
 
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', marginBottom: '40px', alignItems: 'center' }}>
+                                <div className="socio-financial-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '32px', marginBottom: '40px', alignItems: 'center' }}>
                                     <label style={{ display: 'flex', alignItems: 'center', gap: '12px', cursor: isAcademicLocked ? 'not-allowed' : 'pointer', opacity: isAcademicLocked ? 0.6 : 1, pointerEvents: isAcademicLocked ? 'none' : 'auto' }}>
                                         <input type="checkbox" name="hasUnpaidFees" checked={studentData.hasUnpaidFees} onChange={handleChange} disabled={isAcademicLocked} style={{ width: '18px', height: '18px' }} />
                                         <span style={{ fontSize: '1rem', fontWeight: '600' }}>Institutional Fee Pendency?</span>

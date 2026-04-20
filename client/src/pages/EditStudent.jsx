@@ -117,12 +117,24 @@ const EditStudent = () => {
     };
 
     return (
-        <div style={{ paddingBottom: '60px', maxWidth: '1000px', margin: '0 auto' }}>
-            <div style={{ marginBottom: '40px', display: 'flex', alignItems: 'center', gap: '20px' }}>
+        <div style={{ paddingBottom: '60px', maxWidth: '1000px', margin: '0 auto', padding: '10px' }}>
+            <div style={{ 
+                marginBottom: '40px', 
+                display: 'flex', 
+                alignItems: 'center', 
+                gap: '20px',
+                flexWrap: 'wrap'
+            }}>
                 <button onClick={() => navigate('/student-details')} className="btn-secondary" style={{ padding: '8px' }}>
                     <ChevronLeft size={24} />
                 </button>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', background: 'linear-gradient(to right, #60a5fa, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+                <h1 style={{ 
+                    fontSize: 'clamp(1.5rem, 6vw, 2.5rem)', 
+                    fontWeight: '800', 
+                    background: 'linear-gradient(to right, #60a5fa, #a855f7)', 
+                    WebkitBackgroundClip: 'text', 
+                    WebkitTextFillColor: 'transparent' 
+                }}>
                     Edit Student Profile
                 </h1>
             </div>
@@ -141,7 +153,12 @@ const EditStudent = () => {
                 </div>
             )}
 
-            <form onSubmit={onSubmit} className="card glass" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', padding: '40px' }}>
+            <form onSubmit={onSubmit} className="card glass" style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', 
+                gap: '24px', 
+                padding: 'clamp(20px, 5vw, 40px)' 
+            }}>
                 <div className="input-group">
                     <label>Full Name</label>
                     <input type="text" name="name" value={formData.name} onChange={onChange} style={inputStyle} />
@@ -172,8 +189,10 @@ const EditStudent = () => {
                 </div>
 
                 <div style={{ gridColumn: '1 / -1', textAlign: 'center', marginTop: '32px' }}>
-                    <button type="submit" className="btn-primary" style={{ padding: '14px 60px' }} disabled={loading}>
-                        <Save size={20} style={{ marginRight: '8px' }} /> {loading ? 'Updating...' : 'Update Record'}
+                    <button type="submit" className="btn-primary" style={{ padding: '14px 60px', width: 'auto', minWidth: 'min(100%, 250px)' }} disabled={loading}>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                            <Save size={20} /> {loading ? 'Updating...' : 'Update Record'}
+                        </div>
                     </button>
                 </div>
             </form>

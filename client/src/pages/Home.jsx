@@ -77,7 +77,7 @@ const Home = () => {
     return (
         <div className="animate-fade">
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
+                <h1 style={{ fontWeight: '800', marginBottom: '8px' }}>
                     {isFaculty ? 'Student Dropout Prediction Analytics' : 'Student Progress'}
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
@@ -85,39 +85,23 @@ const Home = () => {
                 </p>
             </div>
 
-            <div className="stats-grid" style={{ marginBottom: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
-                <div
-                    className="card glass stat-card"
-                    onClick={() => isFaculty && navigate('/student-details')}
-                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
-                >
+            <div className="stats-grid" style={{ marginBottom: '32px' }}>
+                <div className="card glass stat-card" onClick={() => isFaculty && navigate('/student-details')} style={{ cursor: isFaculty ? 'pointer' : 'default', padding: 'clamp(16px, 4vw, 28px)' }}>
                     <Users size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Total Students</p>
                     <p className="stat-value">{students.length}</p>
                 </div>
-                <div
-                    className="card glass stat-card"
-                    onClick={() => isFaculty && navigate('/student-details?risk=High Risk')}
-                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
-                >
+                <div className="card glass stat-card" onClick={() => isFaculty && navigate('/student-details?risk=High Risk')} style={{ cursor: isFaculty ? 'pointer' : 'default', padding: 'clamp(16px, 4vw, 28px)' }}>
                     <AlertTriangle size={24} color="#f87171" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Critical Risk Students</p>
                     <p className="stat-value" style={{ color: '#f87171' }}>{highRiskCount}</p>
                 </div>
-                <div
-                    className="card glass stat-card"
-                    onClick={() => isFaculty && navigate('/student-details?risk=Low Risk')}
-                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
-                >
+                <div className="card glass stat-card" onClick={() => isFaculty && navigate('/student-details?risk=Low Risk')} style={{ cursor: isFaculty ? 'pointer' : 'default', padding: 'clamp(16px, 4vw, 28px)' }}>
                     <CheckCircle size={24} color="#4ade80" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Stable Students</p>
                     <p className="stat-value" style={{ color: '#4ade80' }}>{lowRiskCount}</p>
                 </div>
-                <div
-                    className="card glass stat-card"
-                    onClick={() => isFaculty && navigate('/student-details?risk=Not Predicted')}
-                    style={{ cursor: isFaculty ? 'pointer' : 'default' }}
-                >
+                <div className="card glass stat-card" onClick={() => isFaculty && navigate('/student-details?risk=Not Predicted')} style={{ cursor: isFaculty ? 'pointer' : 'default', padding: 'clamp(16px, 4vw, 28px)' }}>
                     <Search size={24} color="var(--primary)" style={{ marginBottom: '12px' }} />
                     <p style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Unpredicted Students</p>
                     <p className="stat-value">{notPredictedCount}</p>
@@ -135,22 +119,22 @@ const Home = () => {
                 )}
             </div>
 
-            <div className="form-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '32px' }}>
+            <div className="form-grid" style={{ gap: '32px' }}>
                 {/* Overall Distribution Chart */}
-                <div className="card glass" style={{ height: '450px', display: 'flex', flexDirection: 'column' }}>
+                <div className="card glass" style={{ minHeight: 'clamp(300px, 50vh, 400px)', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                         <PieChartIcon size={20} color="var(--primary)" />
                         <h3 style={{ fontSize: '1.25rem' }}>Overall Risk Profile</h3>
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minHeight: '200px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={pieData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={80}
-                                    outerRadius={120}
+                                    innerRadius={60}
+                                    outerRadius={100}
                                     paddingAngle={5}
                                     dataKey="value"
                                 >
@@ -169,20 +153,20 @@ const Home = () => {
                 </div>
 
                 {/* Departmental Analytics Pie Chart */}
-                <div className="card glass" style={{ height: '450px', display: 'flex', flexDirection: 'column' }}>
+                <div className="card glass" style={{ minHeight: 'clamp(300px, 50vh, 400px)', display: 'flex', flexDirection: 'column' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                         <PieChartIcon size={20} color="var(--primary)" />
                         <h3 style={{ fontSize: '1.25rem' }}>Departmental Distribution</h3>
                     </div>
-                    <div style={{ flex: 1 }}>
+                    <div style={{ flex: 1, minHeight: '200px' }}>
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart>
                                 <Pie
                                     data={deptPieData}
                                     cx="50%"
                                     cy="50%"
-                                    innerRadius={80}
-                                    outerRadius={120}
+                                    innerRadius={60}
+                                    outerRadius={100}
                                     paddingAngle={5}
                                     dataKey="value"
                                 >

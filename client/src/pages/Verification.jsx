@@ -91,19 +91,26 @@ const Verification = () => {
 
     return (
         <div className="animate-fade" style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                marginBottom: '48px',
+                flexWrap: 'wrap',
+                gap: '24px'
+            }}>
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                         <ShieldCheck size={20} color="var(--primary)" />
                         <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Administrative Gateway</span>
                     </div>
-                    <h1 className="text-gradient" style={{ fontSize: '3rem', fontWeight: '900', letterSpacing: '-0.04em' }}>
+                    <h1 className="text-gradient" style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', fontWeight: '900', letterSpacing: '-0.04em' }}>
                         Pending Verifications
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '8px' }}>Reviewing {vType.toUpperCase()} institutional data integrity.</p>
                 </div>
 
-                <div className="glass" style={{ padding: '16px 24px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <div className="glass" style={{ padding: '16px 24px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '16px', marginLeft: 'auto' }}>
                     <div style={{ textAlign: 'right' }}>
                         <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: '700' }}>PENDING QUEUE</p>
                         <p style={{ fontSize: '1.25rem', fontWeight: '900', color: 'var(--primary)' }}>{students.length} Students</p>
@@ -112,7 +119,12 @@ const Verification = () => {
                 </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: selectedStudent ? '400px 1fr' : '1fr', gap: '32px', alignItems: 'start' }}>
+            <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: selectedStudent ? 'repeat(auto-fit, minmax(min(100%, 400px), 1fr))' : '1fr', 
+                gap: '32px', 
+                alignItems: 'start' 
+            }}>
 
                 {/* Search and List */}
                 <div className="glass" style={{ padding: '24px', borderRadius: '28px', border: '1px solid var(--glass-border)' }}>
@@ -219,7 +231,7 @@ const Verification = () => {
                         <div style={{ marginBottom: '40px' }}>
                             {vType === 'academic' && (
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '24px' }}>
                                         <div className="glass-dark" style={{ padding: '24px', borderRadius: '20px' }}>
                                             <h4 style={{ color: 'var(--primary)', fontWeight: '800', textTransform: 'uppercase', fontSize: '0.75rem', marginBottom: '16px' }}>Academic & Personal</h4>
                                             <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -287,7 +299,7 @@ const Verification = () => {
                             )}
 
                             {vType === 'lab' && (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '24px' }}>
                                     <div className="glass-dark" style={{ padding: '24px', borderRadius: '20px' }}>
                                         <h4 style={{ color: 'var(--primary)', fontWeight: '800', textTransform: 'uppercase', fontSize: '0.75rem', marginBottom: '16px' }}>Identity Details</h4>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
@@ -309,7 +321,7 @@ const Verification = () => {
                             )}
 
                             {vType === 'placement' && (
-                                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+                                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 250px), 1fr))', gap: '24px' }}>
                                     <div className="glass-dark" style={{ padding: '24px', borderRadius: '20px' }}>
                                         <h4 style={{ color: 'var(--primary)', fontWeight: '800', textTransform: 'uppercase', fontSize: '0.75rem', marginBottom: '16px' }}>Recruitment Status</h4>
                                         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
@@ -13,13 +13,30 @@ import {
     Search,
     Users,
     History,
-    ClipboardCheck
+    ClipboardCheck,
+    Menu,
+    X
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+    // Close sidebar when route changes
+    useEffect(() => {
+        setIsSidebarOpen(false);
+    }, [location]);
+
+    // Prevent scrolling when mobile sidebar is open
+    useEffect(() => {
+        if (isSidebarOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isSidebarOpen]);
 
     const handleLogout = () => {
         logout();
@@ -30,7 +47,30 @@ const Layout = ({ children }) => {
 
     return (
         <div className="app-layout">
-            <aside className="sidebar glass">
+            {/* Mobile Header */}
+            <header className="mobile-header">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '32px', height: '32px', background: 'white', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}>
+                        <img src="/BannariAmman_logo.png" alt="Logo" style={{ width: '80%', height: 'auto' }} />
+                    </div>
+                    <span style={{ fontWeight: '700', fontSize: '1.1rem' }}>Dropout <span style={{ color: 'var(--primary)' }}>Predict</span></span>
+                </div>
+                <button 
+                    className="menu-toggle"
+                    onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+                    aria-label="Toggle Menu"
+                >
+                    {isSidebarOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </header>
+
+            {/* Sidebar Overlay */}
+            <div 
+                className={`sidebar-overlay ${isSidebarOpen ? 'show' : ''}`}
+                onClick={() => setIsSidebarOpen(false)}
+            />
+
+            <aside className={`sidebar glass ${isSidebarOpen ? 'open' : ''}`}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '40px', padding: '0 8px' }}>
                     <div style={{
                         width: '40px',

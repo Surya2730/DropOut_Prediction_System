@@ -183,18 +183,25 @@ const StudentDetails = () => {
 
     return (
         <div className="animate-fade" style={{ paddingBottom: '40px' }}>
-            <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div>
-                    <h1 style={{ fontSize: '2.25rem', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ 
+                marginBottom: '32px', 
+                display: 'flex', 
+                flexDirection: 'column',
+                gap: '20px',
+                justifyContent: 'space-between', 
+                alignItems: 'flex-start' 
+            }} className="page-header-responsive">
+                <div style={{ width: '100%' }}>
+                    <h1 style={{ marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
                         {riskFilter === 'High Risk' && <AlertTriangle size={32} color="#f87171" />}
                         {riskFilter === 'Low Risk' && <CheckCircle size={32} color="#4ade80" />}
                         {riskFilter === 'Not Predicted' && <Search size={32} color="var(--primary)" />}
-                        {getPageTitle()}
+                        <span style={{ fontSize: 'clamp(1.5rem, 5vw, 2.25rem)' }}>{getPageTitle()}</span>
                     </h1>
                     <p style={{ color: 'var(--text-muted)' }}>{getPageDescription()}</p>
                 </div>
-                <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: '300px' }}>
+                <div style={{ display: 'flex', gap: '16px', alignItems: 'center', width: '100%', flexWrap: 'wrap' }}>
+                    <div style={{ position: 'relative', flex: '1', minWidth: '200px' }}>
                         <Search style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
                         <input
                             type="text"
@@ -218,22 +225,24 @@ const StudentDetails = () => {
                         style={{
                             display: 'flex',
                             alignItems: 'center',
+                            justifyContent: 'center',
                             gap: '8px',
                             padding: '12px 20px',
                             borderRadius: '10px',
                             width: 'auto',
+                            minWidth: 'fit-content',
                             boxShadow: 'none',
                             fontSize: '0.9rem'
                         }}
                         title={filteredStudents.length === 0 ? 'No records available to export' : 'Export current list to PDF'}
                     >
                         <FileDown size={18} />
-                        Export PDF
+                        <span>Export PDF</span>
                     </button>
                 </div>
             </div>
 
-            <div className="card glass" style={{ padding: 0, overflow: 'hidden' }}>
+            <div className="table-container card glass" style={{ padding: 0 }}>
                 <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                     <thead style={{ background: 'var(--bg-secondary)' }}>
                         <tr>

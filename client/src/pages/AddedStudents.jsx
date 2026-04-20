@@ -338,73 +338,85 @@ const AddedStudents = () => {
                                         }}>
                                             {year} ({groupedStudents[dept][year].length} students)
                                         </h5>
-                                        <div style={{ display: 'grid', gap: '12px', paddingLeft: '16px' }}>
+                                        <div style={{ display: 'grid', gap: '12px', paddingLeft: 'clamp(0px, 2vw, 16px)' }}>
                                             {groupedStudents[dept][year].map((student) => (
                                                 <div
                                                     key={student._id}
                                                     style={{
                                                         padding: '16px',
                                                         border: '1px solid var(--border)',
-                                                        borderRadius: '8px',
+                                                        borderRadius: '12px',
                                                         background: 'var(--bg-secondary)',
                                                         display: 'flex',
+                                                        flexWrap: 'wrap',
                                                         justifyContent: 'space-between',
-                                                        alignItems: 'center'
+                                                        alignItems: 'center',
+                                                        gap: '16px'
                                                     }}
                                                 >
-                                                    <div style={{ flex: 1 }}>
-                                                        <p style={{ fontWeight: '600', margin: '0' }}>{student.name}</p>
-                                                        <p style={{ color: 'var(--text-muted)', margin: '4px 0' }}>{student.email}</p>
-                                                        <p style={{ color: 'var(--text-muted)', margin: '0', fontSize: '0.875rem' }}>
+                                                    <div style={{ flex: '1 1 200px' }}>
+                                                        <p style={{ fontWeight: '600', margin: '0', fontSize: '1.05rem' }}>{student.name}</p>
+                                                        <p style={{ color: 'var(--text-muted)', margin: '4px 0', fontSize: '0.9rem', wordBreak: 'break-all' }}>{student.email}</p>
+                                                        <p style={{ color: 'var(--text-muted)', margin: '0', fontSize: '0.85rem' }}>
                                                             {student.registerNo} | {student.department} | {student.year}
                                                         </p>
                                                     </div>
-                                                    <div style={{
-                                                        padding: '4px 12px',
-                                                        borderRadius: '20px',
-                                                        background: student.riskStatus === 'High Risk' ? '#fee2e2' : student.riskStatus === 'Low Risk' ? '#d1fae5' : '#e2e8f0',
-                                                        color: student.riskStatus === 'High Risk' ? '#991b1b' : student.riskStatus === 'Low Risk' ? '#065f46' : '#475569',
-                                                        fontSize: '0.75rem',
-                                                        fontWeight: '600',
-                                                        marginRight: '16px'
+                                                    <div style={{ 
+                                                        display: 'flex', 
+                                                        alignItems: 'center', 
+                                                        gap: '16px',
+                                                        width: 'auto',
+                                                        justifyContent: 'space-between',
+                                                        flexWrap: 'wrap'
                                                     }}>
-                                                        {student.riskStatus || 'Not Predicted'}
-                                                    </div>
-                                                    <div style={{ display: 'flex', gap: '8px' }}>
-                                                        <button
-                                                            onClick={() => handleEdit(student)}
-                                                            style={{
-                                                                padding: '8px',
-                                                                border: 'none',
-                                                                borderRadius: '6px',
-                                                                background: 'var(--primary)',
-                                                                color: '#ffffff',
-                                                                cursor: 'pointer',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center'
-                                                            }}
-                                                            title="Edit Student"
-                                                        >
-                                                            <Edit size={16} />
-                                                        </button>
-                                                        <button
-                                                            onClick={() => handleDelete(student)}
-                                                            style={{
-                                                                padding: '8px',
-                                                                border: 'none',
-                                                                borderRadius: '6px',
-                                                                background: '#ef4444',
-                                                                color: '#ffffff',
-                                                                cursor: 'pointer',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                justifyContent: 'center'
-                                                            }}
-                                                            title="Delete Student"
-                                                        >
-                                                            <Trash2 size={16} />
-                                                        </button>
+                                                        <div style={{
+                                                            padding: '6px 12px',
+                                                            borderRadius: '20px',
+                                                            background: student.riskStatus === 'High Risk' ? '#fee2e2' : student.riskStatus === 'Low Risk' ? '#d1fae5' : '#e2e8f0',
+                                                            color: student.riskStatus === 'High Risk' ? '#991b1b' : student.riskStatus === 'Low Risk' ? '#065f46' : '#475569',
+                                                            fontSize: '0.75rem',
+                                                            fontWeight: '700',
+                                                            whiteSpace: 'nowrap'
+                                                        }}>
+                                                            {student.riskStatus || 'Not Predicted'}
+                                                        </div>
+                                                        <div style={{ display: 'flex', gap: '8px' }}>
+                                                            <button
+                                                                onClick={() => handleEdit(student)}
+                                                                className="btn-primary"
+                                                                style={{
+                                                                    padding: '8px',
+                                                                    borderRadius: '8px',
+                                                                    width: '36px',
+                                                                    height: '36px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center'
+                                                                }}
+                                                                title="Edit Student"
+                                                            >
+                                                                <Edit size={16} />
+                                                            </button>
+                                                            <button
+                                                                onClick={() => handleDelete(student)}
+                                                                style={{
+                                                                    padding: '8px',
+                                                                    border: 'none',
+                                                                    borderRadius: '8px',
+                                                                    background: '#ef4444',
+                                                                    color: '#ffffff',
+                                                                    cursor: 'pointer',
+                                                                    width: '36px',
+                                                                    height: '36px',
+                                                                    display: 'flex',
+                                                                    alignItems: 'center',
+                                                                    justifyContent: 'center'
+                                                                }}
+                                                                title="Delete Student"
+                                                            >
+                                                                <Trash2 size={16} />
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             ))}

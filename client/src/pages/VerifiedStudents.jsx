@@ -155,26 +155,42 @@ const VerifiedStudents = () => {
 
     return (
         <div className="animate-fade" style={{ maxWidth: '1400px', margin: '0 auto' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '48px' }}>
+            <div style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', 
+                alignItems: 'center', 
+                marginBottom: '48px',
+                flexWrap: 'wrap',
+                gap: '24px'
+            }}>
                 <div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '12px' }}>
                         <History size={20} color="var(--primary)" />
                         <span style={{ fontSize: '0.85rem', fontWeight: '800', color: 'var(--primary)', letterSpacing: '0.1em', textTransform: 'uppercase' }}>Archival Access</span>
                     </div>
-                    <h1 className="text-gradient" style={{ fontSize: '3rem', fontWeight: '900', letterSpacing: '-0.04em' }}>
+                    <h1 className="text-gradient" style={{ fontSize: 'clamp(2rem, 8vw, 3rem)', fontWeight: '900', letterSpacing: '-0.04em' }}>
                         Verified Students
                     </h1>
                     <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem', marginTop: '8px' }}>Auditing history of processed student clearances.</p>
                 </div>
 
-                <button onClick={fetchVerifiedStudents} className="glass" style={{ padding: '12px 24px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer' }}>
+                <button onClick={fetchVerifiedStudents} className="glass" style={{ padding: '12px 24px', borderRadius: '16px', display: 'flex', alignItems: 'center', gap: '10px', color: 'var(--primary)', fontWeight: '700', cursor: 'pointer', marginLeft: 'auto' }}>
                     <RefreshCw size={18} /> Refresh Records
                 </button>
             </div>
 
             <div className="glass" style={{ borderRadius: '28px', overflow: 'hidden', border: '1px solid var(--glass-border)' }}>
-                <div style={{ padding: '32px', background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid var(--glass-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ position: 'relative', width: '400px' }}>
+                <div style={{ 
+                    padding: '32px', 
+                    background: 'rgba(255,255,255,0.02)', 
+                    borderBottom: '1px solid var(--glass-border)', 
+                    display: 'flex', 
+                    justifyContent: 'space-between', 
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                    gap: '24px'
+                }}>
+                    <div style={{ position: 'relative', flex: '1 1 300px' }}>
                         <Search style={{ position: 'absolute', left: '16px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} size={18} />
                         <input
                             type="text"
@@ -192,7 +208,7 @@ const VerifiedStudents = () => {
                             }}
                         />
                     </div>
-                    <div style={{ display: 'flex', gap: '24px' }}>
+                    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                             <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--success)' }}></div>
                             <span style={{ fontSize: '0.85rem', fontWeight: '600', color: 'var(--text-muted)' }}>Verified: {students.filter(s => (vType === 'academic' ? s.academicVerification : vType === 'lab' ? s.labVerification : s.placementVerification) === 'Verified').length}</span>
@@ -334,7 +350,7 @@ const VerifiedStudents = () => {
                             <button onClick={() => { setSelectedStudent(null); setRemark(''); }} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><XCircle size={24} /></button>
                         </div>
 
-                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 200px), 1fr))', gap: '24px', marginBottom: '32px' }}>
                             <div className="glass-dark" style={{ padding: '20px', borderRadius: '20px' }}>
                                 <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>REGISTER ID</p>
                                 <p style={{ fontWeight: '800' }}>{selectedStudent.registerNo}</p>

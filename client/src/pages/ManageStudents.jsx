@@ -41,7 +41,7 @@ const ManageStudents = () => {
     return (
         <div className="animate-fade">
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '2.5rem', fontWeight: '800', marginBottom: '8px' }}>
+                <h1 style={{ fontWeight: '800', marginBottom: '8px' }}>
                     Manage Student Accounts
                 </h1>
                 <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
@@ -132,15 +132,13 @@ const ManageStudents = () => {
                         <button
                             type="submit"
                             disabled={loading}
-                            style={{
-                                padding: '12px 24px',
-                                background: 'var(--primary)',
-                                color: '#ffffff',
-                                border: 'none',
-                                borderRadius: '8px',
-                                cursor: loading ? 'not-allowed' : 'pointer',
-                                fontSize: '1rem',
-                                fontWeight: '600'
+                            className="btn-primary"
+                            style={{ 
+                                width: '100%',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                gap: '8px'
                             }}
                         >
                             {loading ? 'Creating...' : 'Create Student Account'}
@@ -173,16 +171,8 @@ const ManageStudents = () => {
 
                     <button
                         onClick={() => navigate('/faculty/added-students')}
-                        style={{
-                            padding: '12px 24px',
-                            background: '#3b82f6',
-                            color: '#ffffff',
-                            border: 'none',
-                            borderRadius: '8px',
-                            cursor: 'pointer',
-                            fontSize: '1rem',
-                            fontWeight: '600'
-                        }}
+                        className="btn-primary"
+                        style={{ background: '#3b82f6', width: 'auto', minWidth: '200px' }}
                     >
                         View Added Students
                     </button>

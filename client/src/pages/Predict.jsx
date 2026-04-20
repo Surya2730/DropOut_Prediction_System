@@ -134,13 +134,13 @@ const Predict = () => {
     };
 
     return (
-        <div>
+        <div className="animate-fade">
             <div style={{ marginBottom: '32px' }}>
-                <h1 style={{ fontSize: '2.25rem', marginBottom: '8px' }}>Risk Analysis</h1>
+                <h1 style={{ fontWeight: '700', marginBottom: '8px' }}>Risk Analysis</h1>
                 <p style={{ color: 'var(--text-muted)' }}>Run AI predictions to identify students who may need academic intervention.</p>
             </div>
 
-            <div className="card glass animate-fade" style={{ maxWidth: '600px', marginBottom: '32px' }}>
+            <div className="card glass animate-fade" style={{ width: '100%', maxWidth: '600px', marginBottom: '32px' }}>
                 <h3 style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px' }}>
                     <Search size={20} color="var(--primary)" />
                     Select Student for Prediction
@@ -186,11 +186,11 @@ const Predict = () => {
             </div>
 
             {result && (
-                <div className="card glass animate-fade" style={{
+                <div className="card glass animate-fade prediction-result-card" style={{
                     border: `2px solid ${result.riskStatus === 'High Risk' ? '#f87171' : '#4ade80'}`,
-                    padding: '32px'
+                    padding: 'clamp(16px, 5vw, 32px)'
                 }}>
-                    <div style={{ display: 'flex', alignItems: 'flex-start', gap: '24px' }}>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'flex-start', gap: '24px' }}>
                         <div style={{
                             padding: '16px',
                             background: result.riskStatus === 'High Risk' ? 'rgba(239, 68, 68, 0.1)' : 'rgba(34, 197, 94, 0.1)',
@@ -202,27 +202,28 @@ const Predict = () => {
                                 <CheckCircle2 size={48} color="#4ade80" />
                             )}
                         </div>
-                        <div style={{ flex: 1 }}>
+                        <div style={{ flex: '1 1 300px' }}>
                             <h2 style={{ fontSize: '1.75rem', marginBottom: '4px' }}>{formatStudentName(result.name)}</h2>
                             <p style={{ color: 'var(--text-muted)', marginBottom: '20px' }}>{result.registerNo}</p>
+                            <p style={{ color: 'var(--text-muted)', marginBottom: '20px', fontSize: '0.9rem' }}>{result.department} | Year {result.year}</p>
 
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                            <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
                                 <span style={{ fontSize: '1rem', fontWeight: '500' }}>Analysis Result:</span>
                                 <span className={`status-badge ${result.riskStatus === 'High Risk' ? 'status-high' : 'status-low'}`} style={{ fontSize: '1rem', padding: '6px 20px' }}>
                                     {result.riskStatus}
                                 </span>
                             </div>
 
-                            <div className="form-grid" style={{ gridTemplateColumns: 'repeat(3, 1fr)', background: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px' }}>
-                                <div>
+                            <div className="stats-grid" style={{ background: 'var(--bg-secondary)', padding: '20px', borderRadius: '12px', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))' }}>
+                                <div style={{ textAlign: 'center' }}>
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>CGPA</p>
                                     <p style={{ fontSize: '1.25rem', fontWeight: '600' }}>{result.cgpa}</p>
                                 </div>
-                                <div>
+                                <div style={{ textAlign: 'center' }}>
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Attendance</p>
                                     <p style={{ fontSize: '1.25rem', fontWeight: '600' }}>{result.attendance}%</p>
                                 </div>
-                                <div>
+                                <div style={{ textAlign: 'center' }}>
                                     <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '4px' }}>Backlogs</p>
                                     <p style={{ fontSize: '1.25rem', fontWeight: '600' }}>{result.backlogs}</p>
                                 </div>

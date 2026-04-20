@@ -59,19 +59,8 @@ const Login = () => {
 
     return (
         <div className="auth-page">
-            <div style={{
-                display: 'flex',
-                gap: '40px',
-                alignItems: 'center',
-                justifyContent: 'center',
-                width: '100%',
-                maxWidth: '1000px',
-                padding: '20px',
-                flexWrap: 'wrap'
-            }}>
-
-                {/* LOGIN FORM */}
-                <div className="auth-card glass animate-fade" style={{ flex: '1', minWidth: '380px', maxWidth: '440px' }}>
+            <div className="auth-container">
+                <div className="auth-card glass animate-fade">
                     <div style={{ marginBottom: '32px', textAlign: 'center' }}>
                         <div style={{
                             width: '80px',
@@ -104,7 +93,7 @@ const Login = () => {
                                     value={formData.email}
                                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                     required
-                                    style={{ paddingLeft: '35px' }}
+                                    style={{ paddingLeft: '35px', width: '100%', boxSizing: 'border-box' }}
                                 />
                             </div>
                         </div>
@@ -118,12 +107,12 @@ const Login = () => {
                                     value={formData.password}
                                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                                     required
-                                    style={{ paddingLeft: '35px' }}
+                                    style={{ paddingLeft: '35px', width: '100%', boxSizing: 'border-box' }}
                                 />
                             </div>
                         </div>
 
-                        <button type="submit" className="btn-primary">
+                        <button type="submit" className="btn-primary" style={{ width: '100%', boxSizing: 'border-box' }}>
                             Sign In
                         </button>
                     </form>
@@ -141,13 +130,7 @@ const Login = () => {
                 </div>
 
                 {/* ✅ UPDATED DEMO PANEL */}
-                <div className="glass animate-fade" style={{
-                    flex: '1',
-                    minWidth: '320px',
-                    maxWidth: '400px',
-                    padding: '32px',
-                    borderRadius: '24px'
-                }}>
+                <div className="glass animate-fade demo-card">
                     <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '24px' }}>
                         <div style={{ padding: '8px', background: 'rgba(99,102,241,0.1)', borderRadius: '10px' }}>
                             <LogIn size={20} color="var(--primary)" />
